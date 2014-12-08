@@ -58,7 +58,7 @@ Contribution
 
 Fork pyserializer on Github
 ``` bash
-$ git clone <clone_url>
+$ git clone https://github.com/localmed/pyserializer.git
 $ cd pyserializer
 ```
 Install development requirements. It is highly recommended that you use a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/), and activate the virtualenv before installing the requirements.
