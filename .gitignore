@@ -1,0 +1,34 @@
+*.log
+*.pid
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+lib64
+__pycache__
+
+# Project
+api.txt
+
+# Installer logs
+pip-log.txt
+
+# Testing
+nosetests.xml
+/reports/
+.coverage
+
+# Text editor
+*.sublime*
