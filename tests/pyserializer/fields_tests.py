@@ -1,10 +1,11 @@
+from __future__ import absolute_import
+
 from nose.tools import *
 from mock import *
 
 from datetime import datetime
 
-from lib.pyserializer.pyserializer.fields import *
-from authentication.decorators import *
+from pyserializer.fields import *
 
 
 class TestField(object):

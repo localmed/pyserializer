@@ -11,7 +11,9 @@ setup(
     license='MIT',
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'six==1.8.0'
+    ],
     classifiers=[
         'Development Status :: 1 - Alpha',
         'Environment :: Web Environment',

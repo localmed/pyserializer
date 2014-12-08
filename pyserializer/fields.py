@@ -1,8 +1,8 @@
 import six
 
-from lib.pyserializer.pyserializer.utils import is_simple_callable, is_iterable
-from lib.pyserializer.pyserializer import constants
-from lib.pyserializer.pyserializer.constants import ISO_8601
+from pyserializer.utils import is_simple_callable, is_iterable
+from pyserializer import constants
+from pyserializer.constants import ISO_8601
 
 
 __all__ = [

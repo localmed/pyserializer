@@ -2,8 +2,8 @@ import six
 import copy
 from collections import OrderedDict
 
-from lib.pyserializer.pyserializer.fields import Field
-from lib.pyserializer.pyserializer.utils import is_iterable
+from pyserializer.fields import Field
+from pyserializer.utils import is_iterable
 
 
 __all__ = [

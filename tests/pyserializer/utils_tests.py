@@ -1,7 +1,7 @@
 from nose.tools import *
 from mock import *
 
-from lib.pyserializer.pyserializer.utils import *
+from pyserializer.utils import *
 
 
 class TestUtil(object):

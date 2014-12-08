@@ -1,7 +1,7 @@
 from nose.tools import *
 from mock import *
 
-from lib.pyserializer.pyserializer.serializers import *
+from pyserializer.serializers import *
 
 
 class TestSerializer(object):
