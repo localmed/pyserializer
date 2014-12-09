@@ -148,7 +148,7 @@ class BaseSerializer(object):
         '''
         Return a dictionary of metadata about the fields on the serializer.
         '''
-        return {field_name: field.metadata() for field_name, field in six.iteritems(self.fields)}
+        return dict((field_name, field.metadata()) for field_name, field in six.iteritems(self.fields))
 
 
 class Serializer(six.with_metaclass(SerializerMetaclass, BaseSerializer)):
