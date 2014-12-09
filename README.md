@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/localmed/pyserializer.svg?branch=development)](https://travis-ci.org/localmed/pyserializer)
+
 pyserializer
 ============
 
