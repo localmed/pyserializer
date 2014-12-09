@@ -4,8 +4,8 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
-before_install:
+install:
   - "pip install -e ."
-install: "pip install -r requirements.txt"
+  - "pip install -r requirements.txt"
 script: nosetests --with-coverage --cover-erase --cover-package=pyserializer
 after_success: coveralls
