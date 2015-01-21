@@ -37,6 +37,24 @@ class TestField(object):
         assert_equal(output, {'id': '123'})
 
 
+class TestDateField(object):
+
+    def test_to_native_with_datetime(self):
+        value = datetime(2014, 1, 1, 10, 30)
+        output = DateField().to_native(value)
+        assert_equal(output, '2014-01-01')
+
+    def test_to_native_with_date(self):
+        value = datetime(2014, 1, 1, 10, 30)
+        output = DateField().to_native(value)
+        assert_equal(output, '2014-01-01')
+
+    def test_to_with_specified_format(self):
+        value = datetime(2014, 1, 1, 10, 30)
+        output = DateField(format='%d/%m/%y').to_native(value)
+        assert_equal(output, '01/01/14')
+
+
 class TestDateTimeField(object):
 
     def test_to_native(self):

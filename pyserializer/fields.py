@@ -1,4 +1,5 @@
 import six
+from datetime import datetime
 
 from pyserializer.utils import is_simple_callable, is_iterable
 from pyserializer import constants
@@ -8,6 +9,7 @@ from pyserializer.constants import ISO_8601
 __all__ = [
     'Field',
     'CharField',
+    'DateField',
     'DateTimeField',
     'UUIDField',
 ]
@@ -108,6 +110,25 @@ class CharField(Field):
 
     def __init__(self, *args, **kwargs):
         super(CharField, self).__init__(*args, **kwargs)
+
+
+class DateField(Field):
+    type_name = 'DateField'
+    type_label = 'date'
+    format = constants.DATE_FORMAT
+
+    def __init__(self, format=None, *args, **kwargs):
+        self.format = format or self.format
+        super(DateField, self).__init__(*args, **kwargs)
+
+    def to_native(self, value):
+        if value is None or self.format is None:
+            return value
+        if isinstance(value, datetime):
+            value = value.date()
+        if self.format.lower() == ISO_8601:
+            return value.isoformat()
+        return value.strftime(self.format)
 
 
 class DateTimeField(Field):
