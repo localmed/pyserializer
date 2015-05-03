@@ -26,6 +26,7 @@ api.txt
 pip-log.txt
 
 # Testing
+.tox/
 nosetests.xml
 /reports/
 .coverage

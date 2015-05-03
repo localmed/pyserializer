@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    echo "Runs unit tests and coverage."
+    exit
+fi
+
+# Run standard Nose tests with coverage
+nosetests --with-coverage --cover-erase --cover-package=pyserializer --with-yanc

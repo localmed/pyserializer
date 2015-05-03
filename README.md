@@ -29,6 +29,12 @@ class UserSerializer(Serializer):
     email = fields.CharField()
     username = fields.CharField()
 
+    class Meta:
+        fields = (
+            'email',
+            'username'
+        )
+
 
 class CommentSerializer(Serializer):
     user = UserSerializer(source='user') # Eg: Nested serialization
@@ -69,13 +75,13 @@ Install development requirements. It is highly recommended that you use a [virtu
 ``` bash
 $ pip install -r requirements.txt
 ```
-Install pyserializer in development mode.
+Run tests with coverage.
 ``` bash
-$ pip install -e .
+$ make unit_test
 ```
-Run tests.
+Run test Using Tox (Runs the tests in different supported python interpreter):
 ``` bash
-$ nosetests
+$ tox
 ```
 Create a new local branch to submit a pull request.
 ``` bash
