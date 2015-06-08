@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from nose.tools import *
 from mock import *
 
+import six
 from datetime import datetime
+import uuid
 
 from pyserializer.fields import *
 
@@ -35,6 +37,22 @@ class TestField(object):
     def test_to_native_with_dict(self):
         output = Field().to_native({'id': '123'})
         assert_equal(output, {'id': '123'})
+
+
+class TestCharField(object):
+
+    def test_to_native_with_string(self):
+        output = CharField().to_native('123')
+        assert_equal(output, '123')
+
+    def test_to_native_with_int(self):
+        output = CharField().to_native(123)
+        assert_equal(output, '123')
+
+    def test_to_native_with_binary(self):
+        value = uuid.uuid4()
+        output = CharField().to_native(value)
+        assert_equal(output, six.text_type(value))
 
 
 class TestDateField(object):
