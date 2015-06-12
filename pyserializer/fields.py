@@ -100,7 +100,7 @@ class Field(object):
         for attr in optional_attrs:
             value = getattr(self, attr, None)
             if value is not None and value != '':
-                metadata[attr] = '%s' %(value)
+                metadata[attr] = '%s' % (value)
         return metadata
 
 
@@ -110,11 +110,6 @@ class CharField(Field):
 
     def __init__(self, *args, **kwargs):
         super(CharField, self).__init__(*args, **kwargs)
-
-    def to_native(self, value):
-        if value is None:
-            return value
-        return six.text_type(value)
 
 
 class DateField(Field):

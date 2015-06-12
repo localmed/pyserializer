@@ -45,15 +45,6 @@ class TestCharField(object):
         output = CharField().to_native('123')
         assert_equal(output, '123')
 
-    def test_to_native_with_int(self):
-        output = CharField().to_native(123)
-        assert_equal(output, '123')
-
-    def test_to_native_with_binary(self):
-        value = uuid.uuid4()
-        output = CharField().to_native(value)
-        assert_equal(output, six.text_type(value))
-
 
 class TestDateField(object):
 
