@@ -9,7 +9,7 @@ yanc==0.3.3
 tox==1.9.2
 
 # Lint Dependencies
-flake8 2.5.1
+flake8==2.5.1
 
 # Version Management Dependencies
 bumpversion==0.5.3
