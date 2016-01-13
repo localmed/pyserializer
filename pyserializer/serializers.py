@@ -2,7 +2,6 @@ import six
 import copy
 from collections import OrderedDict
 
-from pyserializer.fields import Field
 from pyserializer.utils import is_iterable
 
 
@@ -138,7 +137,7 @@ class BaseSerializer(object):
         '''
         if not self._data:
             obj = self.object
-            if is_iterable(obj):
+            if isinstance(obj, (list, tuple)):
                 self._data = [self.to_native(item) for item in obj]
             else:
                 self._data = self.to_native(obj)
