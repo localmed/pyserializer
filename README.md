@@ -83,6 +83,12 @@ Run test Using Tox (Runs the tests in different supported python interpreter):
 ``` bash
 $ tox
 ```
+
+Run Lint:
+``` bash
+$ make lint
+```
+
 Create a new local branch to submit a pull request.
 ``` bash
 $ git checkout -b name-of-feature

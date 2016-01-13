@@ -2,8 +2,6 @@ import six
 import copy
 from collections import OrderedDict
 
-from pyserializer.utils import is_iterable
-
 
 __all__ = [
     'SerializerOptions',
@@ -26,7 +24,9 @@ class SerializerMetaclass(type):
 
     def __new__(cls, name, bases, attrs):
         '''
-        Arguments passed in to new method are are upperattr_metaclass, future_class_name, future_class_parents, future_class_attr
+        Arguments passed in to new method are
+        upperattr_metaclass, future_class_name, future_class_parents,
+        future_class_attr.
         Get Fields defined in parent classes and final class
         '''
         new_class = super(SerializerMetaclass, cls).__new__(cls, name, bases, attrs)
@@ -79,7 +79,9 @@ class BaseSerializer(object):
         self._data = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
-            raise ValueError('instance should be a queryset or other iterable with many=True')
+            raise ValueError(
+                'instance should be a queryset or other iterable with many=True'
+            )
 
     def get_fields(self):
         '''

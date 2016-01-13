@@ -1,13 +1,11 @@
 from __future__ import absolute_import
 
-from nose.tools import *
-from mock import *
+from nose.tools import *  # flake8: noqa
+from mock import *  # flake8: noqa
 
-import six
 from datetime import datetime
-import uuid
 
-from pyserializer.fields import *
+from pyserializer.fields import *  # flake8: noqa
 
 
 class TestField(object):
@@ -26,7 +24,7 @@ class TestField(object):
         assert_equal(output, 'Dr. John Smith')
 
     def test_get_component_with_dict(self):
-        obj = {'display':'Dr. John Smith'}
+        obj = {'display': 'Dr. John Smith'}
         output = Field().get_component(obj, 'display')
         assert_equal(output, 'Dr. John Smith')
 

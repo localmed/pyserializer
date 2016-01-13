@@ -170,4 +170,3 @@ class IntegerField(Field):
 
     def __init__(self, format=None, *args, **kwargs):
         super(IntegerField, self).__init__(*args, **kwargs)
-

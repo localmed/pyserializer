@@ -1,7 +1,7 @@
-from nose.tools import *
-from mock import *
+from nose.tools import *  # flake8: noqa
+from mock import *  # flake8: noqa
 
-from pyserializer.serializers import *
+from pyserializer.serializers import *  # flake8: noqa
 
 
 class TestSerializer(object):

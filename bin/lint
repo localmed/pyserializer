@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    echo "Lint all project files."
+    exit
+fi
+
+# Lint python files using flake8
+if [ "$1" == "--strict" ]; then
+    flake8 --statistics .
+else
+    flake8 --ignore E501,E712,F841,F401 --statistics .
+fi
