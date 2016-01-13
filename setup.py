@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='pyserializer',
-    version='0.0.5',
+    version='0.0.6',
     description='Simple python serialization library.',
     author='LocalMed',
     author_email='ecordell@localmed.com, pete@localmed.com, joel.james@localmed.com',
