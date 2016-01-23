@@ -80,7 +80,8 @@ class BaseSerializer(object):
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
-                'instance should be a queryset or other iterable with many=True'
+                'instance should be a queryset or other iterable with \
+                many=True'
             )
 
     def get_fields(self):
@@ -112,7 +113,8 @@ class BaseSerializer(object):
 
     def to_native(self, obj):
         '''
-        Serializes objects. Calls the field_to_native method on each fields.
+        Serializes objects.
+        Calls the field_to_native method on each fields.
         '''
         # Maintain the order in which the fields were defined
         output = OrderedDict()
@@ -145,11 +147,29 @@ class BaseSerializer(object):
                 self._data = self.to_native(obj)
         return self._data
 
+    def restore_fields(self, data, files):
+        """
+        Core of deserialization, together with `restore_object`.
+        Converts a dictionary of data into a dictionary of deserialized fields.
+        """
+        reverted_data = {}
+
+        if data is None and not isinstance(data, dict):
+            raise AttributeError('`data` must be a dict.')
+
+        for field_name, field in six.iteritems(self.fields):
+            field.initialize(parent=self, field_name=field_name)
+            field.field_from_native(data, files, field_name, reverted_data)
+
+        return reverted_data
+
     def metadata(self):
         '''
         Return a dictionary of metadata about the fields on the serializer.
         '''
-        return dict((field_name, field.metadata()) for field_name, field in six.iteritems(self.fields))
+        return dict(
+            (field_name, field.metadata()) for field_name, field in six.iteritems(self.fields)
+        )
 
 
 class Serializer(six.with_metaclass(SerializerMetaclass, BaseSerializer)):

@@ -1,5 +1,7 @@
 import six
-from datetime import datetime
+from datetime import datetime, date
+import warnings
+import uuid
 
 from pyserializer.utils import is_simple_callable, is_iterable
 from pyserializer import constants
@@ -53,10 +55,17 @@ class Field(object):
                 raise AttributeError(str(e))
         return self.to_native(value)
 
+    # def field_to_python(self, data, field_name):
+    #     """
+    #     Given a dictionary and a field name, updates the dictionary
+    #     with it's deserialized value.
+    #     """
+    #     data = data or {}
+
     def get_component(self, obj, attr_name):
         '''
         Given an object, and an attribute name,
-        return that attribute on the object.
+        returns the attribute on the object.
         '''
         if isinstance(obj, dict):
             return obj.get(attr_name)
@@ -65,7 +74,7 @@ class Field(object):
 
     def to_native(self, value):
         '''
-        Converts the field's value into it's simple representation.
+        Converts the field's value into a serialized representation.
         '''
         if is_simple_callable(value):
             value = value()
@@ -79,12 +88,6 @@ class Field(object):
         return value
 
     def initialize(self, parent, field_name):
-        '''
-        Called to set up a field prior to field_to_native.
-
-        parent - The parent serializer.
-        field_name - The name of the field being initialized.
-        '''
         self.parent = parent
         self.field_name = field_name
 
@@ -130,11 +133,36 @@ class DateField(Field):
             return value.isoformat()
         return value.strftime(self.format)
 
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+
+        if isinstance(value, date):
+            return value
+
+        if isinstance(value, datetime):
+            value = date(value.year, value.month, value.day)
+            warnings.warn(
+                'DateField received a date object (%s).' % value,
+                RuntimeWarning
+            )
+            return value
+
+        try:
+            value = datetime.strptime(value, format)
+        except (ValueError, TypeError):
+            message = self.default_error_messages['invalid'] % value
+            raise ValueError(message)
+
 
 class DateTimeField(Field):
     type_name = 'DateTimeField'
     type_label = 'datetime'
     format = constants.DATETIME_FORMAT
+
+    default_error_messages = {
+        'invalid': '`%s` is not a valid DateTime format.'
+    }
 
     def __init__(self, format=None, *args, **kwargs):
         self.format = format or self.format
@@ -150,10 +178,36 @@ class DateTimeField(Field):
             return ret
         return value.strftime(self.format)
 
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+
+        if isinstance(value, datetime):
+            return value
+
+        if isinstance(value, date):
+            value = datetime(value.year, value.month, value.day)
+            warnings.warn(
+                'DateTimeField received a date (%s) object.' % value,
+                RuntimeWarning
+            )
+            return value
+
+        try:
+            value = datetime.strptime(value, format)
+        except (ValueError, TypeError):
+            message = self.default_error_messages['invalid'] % value
+            raise ValueError(message)
+        return value
+
 
 class UUIDField(Field):
     type_name = 'UUIDField'
     type_label = 'string'
+
+    default_error_messages = {
+        'invalid': '`%s` is not a valid UUID format.'
+    }
 
     def __init__(self, format=None, *args, **kwargs):
         super(UUIDField, self).__init__(*args, **kwargs)
@@ -163,10 +217,39 @@ class UUIDField(Field):
             return value
         return six.text_type(value)
 
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+
+        if isinstance(value, uuid.UUID):
+            return value
+
+        try:
+            value = uuid.UUID(str(value))
+        except (ValueError, TypeError):
+            message = self.default_error_messages['invalid'] % value
+            raise ValueError(message)
+        return value
+
 
 class IntegerField(Field):
     type_name = 'IntegerField'
     type_label = 'integer'
 
+    default_error_messages = {
+        'invalid': '`%s` is not a valid Integer format.'
+    }
+
     def __init__(self, format=None, *args, **kwargs):
         super(IntegerField, self).__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+
+        try:
+            value = int(str(value))
+        except (ValueError, TypeError):
+            message = self.default_error_messages['invalid'] % value
+            raise ValueError(message)
+        return value
