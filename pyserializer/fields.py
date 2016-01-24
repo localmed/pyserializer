@@ -87,6 +87,12 @@ class Field(object):
             return d
         return value
 
+    def to_python(self, value):
+        """
+        Reverts a simple representation back to the field's value.
+        """
+        return value
+
     def initialize(self, parent, field_name):
         self.parent = parent
         self.field_name = field_name
@@ -120,6 +126,10 @@ class DateField(Field):
     type_label = 'date'
     format = constants.DATE_FORMAT
 
+    default_error_messages = {
+        'invalid': 'The value received for DateField (%s) is not a valid Date format.'
+    }
+
     def __init__(self, format=None, *args, **kwargs):
         self.format = format or self.format
         super(DateField, self).__init__(*args, **kwargs)
@@ -149,10 +159,11 @@ class DateField(Field):
             return value
 
         try:
-            value = datetime.strptime(value, format)
+            value = datetime.strptime(value, self.format).date()
         except (ValueError, TypeError):
             message = self.default_error_messages['invalid'] % value
             raise ValueError(message)
+        return value
 
 
 class DateTimeField(Field):
@@ -161,7 +172,7 @@ class DateTimeField(Field):
     format = constants.DATETIME_FORMAT
 
     default_error_messages = {
-        'invalid': '`%s` is not a valid DateTime format.'
+        'invalid': 'The value received for DateTimeField (%s) is not a valid DateTime format.'
     }
 
     def __init__(self, format=None, *args, **kwargs):
@@ -194,7 +205,7 @@ class DateTimeField(Field):
             return value
 
         try:
-            value = datetime.strptime(value, format)
+            value = datetime.strptime(value, self.format)
         except (ValueError, TypeError):
             message = self.default_error_messages['invalid'] % value
             raise ValueError(message)
@@ -206,7 +217,7 @@ class UUIDField(Field):
     type_label = 'string'
 
     default_error_messages = {
-        'invalid': '`%s` is not a valid UUID format.'
+        'invalid': 'The value received for UUIDField (%s) is not a valid UUID format.'
     }
 
     def __init__(self, format=None, *args, **kwargs):
@@ -237,7 +248,7 @@ class IntegerField(Field):
     type_label = 'integer'
 
     default_error_messages = {
-        'invalid': '`%s` is not a valid Integer format.'
+        'invalid': 'The value received for IntegerField (%s) is not a valid Integer format.'
     }
 
     def __init__(self, format=None, *args, **kwargs):

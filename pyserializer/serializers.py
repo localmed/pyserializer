@@ -29,7 +29,9 @@ class SerializerMetaclass(type):
         future_class_attr.
         Get Fields defined in parent classes and final class
         '''
-        new_class = super(SerializerMetaclass, cls).__new__(cls, name, bases, attrs)
+        new_class = super(
+            SerializerMetaclass, cls
+        ).__new__(cls, name, bases, attrs)
         parent_fields = new_class.get_parent_fields(bases)
         declared_fields = new_class.get_declared_fields(attrs)
         new_class.set_fields(parent_fields, declared_fields)
@@ -67,22 +69,37 @@ class BaseSerializer(object):
 
     def __init__(self,
                  instance=None,
+                 data_dict=None,
                  source=None,
                  many=False,
                  *args,
                  **kwargs):
-        self.object = instance
+        '''
+        instance: Python object which has to be serialized.
+        data_dict: Dictionary object which has to be serialized.
+        '''
+        self.instance = instance
+        self.data_dict = data_dict
         self.source = source
         self.many = many
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
+        # Deserialize if `data_dict` is passed in
+        self.restore_object()
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
                 'instance should be a queryset or other iterable with \
                 many=True'
             )
+
+    def restore_object(self, instance=None):
+        if self.data_dict:
+            restored_fields = self.restore_fields(self.data_dict)
+            for field_name, field in six.iteritems(self.fields):
+                value = restored_fields.get(field_name)
+                setattr(self, field_name, value)
 
     def get_fields(self):
         '''
@@ -95,6 +112,7 @@ class BaseSerializer(object):
         base_fields = copy.deepcopy(self.base_fields)
         for key, field in six.iteritems(base_fields):
             output[key] = field
+
         # Check for specified fields.
         if self.options.fields:
             if not isinstance(self.options.fields, (list, tuple)):
@@ -103,6 +121,7 @@ class BaseSerializer(object):
             for key in self.options.fields:
                 d[key] = output[key]
             output = d
+
         # Remove anything in 'exclude'
         if self.options.exclude:
             if not isinstance(self.options.fields, (list, tuple)):
@@ -140,28 +159,27 @@ class BaseSerializer(object):
         Returns the serialized data on the serializer.
         '''
         if not self._data:
-            obj = self.object
+            obj = self.instance
             if isinstance(obj, (list, tuple)):
                 self._data = [self.to_native(item) for item in obj]
             else:
                 self._data = self.to_native(obj)
         return self._data
 
-    def restore_fields(self, data, files):
+    def restore_fields(self, data):
         """
-        Core of deserialization, together with `restore_object`.
         Converts a dictionary of data into a dictionary of deserialized fields.
         """
-        reverted_data = {}
+        output = {}
 
         if data is None and not isinstance(data, dict):
-            raise AttributeError('`data` must be a dict.')
+            raise ValueError('%s must be a  instance of dict.' % data)
 
         for field_name, field in six.iteritems(self.fields):
-            field.initialize(parent=self, field_name=field_name)
-            field.field_from_native(data, files, field_name, reverted_data)
+            value = data.get(field_name)
+            output[field_name] = field.to_python(value)
 
-        return reverted_data
+        return output
 
     def metadata(self):
         '''
