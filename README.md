@@ -145,7 +145,7 @@ Submit a pull request. Before submitting a pull request, make sure pull request 
 Features Currently Being Worked On
 ----------------------------------
 
-- Support deserialization
+- Imporove deserialization
 - Support field validations
 
 Copyright
