@@ -33,10 +33,10 @@ class Field(object):
         self.empty = kwargs.pop('empty', '')
 
     def field_to_native(self, obj, field_name):
-        '''
+        """
         Given an object and a field name, returns the value that should be
         serialized for that field.
-        '''
+        """
         if obj is None:
             return self.empty
         if not self.source:
@@ -56,19 +56,19 @@ class Field(object):
         return self.to_native(value)
 
     def get_component(self, obj, attr_name):
-        '''
+        """
         Given an object, and an attribute name,
         returns the attribute on the object.
-        '''
+        """
         if isinstance(obj, dict):
             return obj.get(attr_name)
         else:
             return getattr(obj, attr_name)
 
     def to_native(self, value):
-        '''
+        """
         Converts the field's value into a serialized representation.
-        '''
+        """
         if is_simple_callable(value):
             value = value()
         if is_iterable(value) and not isinstance(value, (dict, six.string_types)):

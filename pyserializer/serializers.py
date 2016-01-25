@@ -12,9 +12,9 @@ __all__ = [
 
 
 class SerializerOptions(object):
-    '''
+    """
     Meta class options for Serializer
-    '''
+    """
     def __init__(self, meta):
         self.fields = getattr(meta, 'fields', ())
         self.exclude = getattr(meta, 'exclude', ())
@@ -23,12 +23,12 @@ class SerializerOptions(object):
 class SerializerMetaclass(type):
 
     def __new__(cls, name, bases, attrs):
-        '''
+        """
         Arguments passed in to new method are
         upperattr_metaclass, future_class_name, future_class_parents,
         future_class_attr.
         Get Fields defined in parent classes and final class
-        '''
+        """
         new_class = super(
             SerializerMetaclass, cls
         ).__new__(cls, name, bases, attrs)
@@ -58,9 +58,9 @@ class SerializerMetaclass(type):
 
 
 class BaseSerializer(object):
-    '''
+    """
     This is the Serializer implementation.
-    '''
+    """
 
     _options_class = SerializerOptions
 
@@ -74,10 +74,10 @@ class BaseSerializer(object):
                  many=False,
                  *args,
                  **kwargs):
-        '''
+        """
         instance: Python object which has to be serialized.
         data_dict: Dictionary object which has to be serialized.
-        '''
+        """
         self.instance = instance
         self.data_dict = data_dict
         self.source = source
@@ -171,9 +171,9 @@ class BaseSerializer(object):
         return field_name, field.to_python(data.get(field_name))
 
     def get_fields(self):
-        '''
+        """
         Returns the complete set of fields for the object as a dict.
-        '''
+        """
         # Maintain the order in which the fields were defined
         output = OrderedDict()
 
@@ -200,10 +200,10 @@ class BaseSerializer(object):
         return output
 
     def to_native(self, obj):
-        '''
+        """
         Serializes objects.
         Calls the field_to_native method on each fields.
-        '''
+        """
         # Maintain the order in which the fields were defined
         output = OrderedDict()
 
@@ -224,9 +224,9 @@ class BaseSerializer(object):
 
     @property
     def data(self):
-        '''
+        """
         Returns the serialized data on the serializer.
-        '''
+        """
         if not self._data:
             obj = self.instance
             if isinstance(obj, (list, tuple)):
@@ -236,16 +236,16 @@ class BaseSerializer(object):
         return self._data
 
     def metadata(self):
-        '''
+        """
         Return a dictionary of metadata about the fields on the serializer.
-        '''
+        """
         return dict(
             (field_name, field.metadata()) for field_name, field in six.iteritems(self.fields)
         )
 
 
 class Serializer(six.with_metaclass(SerializerMetaclass, BaseSerializer)):
-    '''
+    """
     Create the serializer class with Meta class and BaseSerializer
-    '''
+    """
     pass
