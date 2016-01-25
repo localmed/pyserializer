@@ -85,8 +85,7 @@ class BaseSerializer(object):
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
-        # Deserialize if `data_dict` is passed in
-        self.restore_object()
+        self._objects = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
@@ -94,12 +93,82 @@ class BaseSerializer(object):
                 many=True'
             )
 
-    def restore_object(self, instance=None):
-        if self.data_dict:
-            restored_fields = self.restore_fields(self.data_dict)
-            for field_name, field in six.iteritems(self.fields):
-                value = restored_fields.get(field_name)
-                setattr(self, field_name, value)
+    @property
+    def objects(self):
+        return self.restore_objects()
+
+    def restore_objects(self, instance=None):
+        """
+        Deserialize a dictionary of attributes into an object instance.
+        """
+        if not self.data_dict:
+            raise AttributeError(
+                'Cannot restore object unless `data_dict` value is set'
+            )
+        # Create an instance of the serialized class
+        instance = copy.deepcopy(self)
+        restored_fields = self.restore_fields(self.data_dict)
+        for field_name, field in six.iteritems(self.fields):
+            self.restore_object(
+                instance=instance,
+                field_name=field_name,
+                field=field,
+                data=restored_fields
+            )
+
+        self._objects = instance
+        return self._objects
+
+    def restore_object(self, instance, field_name, field, data):
+        if isinstance(field, Serializer):
+            inst = copy.deepcopy(field)
+            for fldname, fld in six.iteritems(field.fields):
+                self.restore_object(
+                    instance=inst,
+                    field_name=fldname,
+                    field=fld,
+                    data=data.get(field_name)
+                )
+            return setattr(self, field_name, inst)
+
+        return setattr(instance, field_name, data.get(field_name))
+
+    def restore_fields(self, data):
+        """
+        Converts a dictionary of data into a dictionary of deserialized fields.
+        """
+        output = {}
+
+        if data is None and not isinstance(data, dict):
+            raise ValueError('%s must be a  instance of dict.' % data)
+
+        for field_name, field in six.iteritems(self.fields):
+            fldname, value = self.restore_field(field_name, field, data)
+            output[fldname] = value
+        return output
+
+    def restore_field(self, field_name, field, data):
+        """
+        Given a field and a deserializable data dictionary,
+        fetches the relevent field data from the data dictionary and
+        returns the deserialized version of the field data
+        along with the field name.
+        Calls the to_python method on each field.
+        """
+        if isinstance(field, Serializer):
+            nested_field_name = field_name
+            nested_data = data.get(nested_field_name)
+            output = {}
+            for fldname, fld in six.iteritems(field.fields):
+                name, python_value = self.restore_field(
+                    field_name=fldname,
+                    field=fld,
+                    data=nested_data
+                )
+                output[name] = python_value
+            return nested_field_name, output
+
+        return field_name, field.to_python(data.get(field_name))
 
     def get_fields(self):
         '''
@@ -165,21 +234,6 @@ class BaseSerializer(object):
             else:
                 self._data = self.to_native(obj)
         return self._data
-
-    def restore_fields(self, data):
-        """
-        Converts a dictionary of data into a dictionary of deserialized fields.
-        """
-        output = {}
-
-        if data is None and not isinstance(data, dict):
-            raise ValueError('%s must be a  instance of dict.' % data)
-
-        for field_name, field in six.iteritems(self.fields):
-            value = data.get(field_name)
-            output[field_name] = field.to_python(value)
-
-        return output
 
     def metadata(self):
         '''

@@ -55,13 +55,6 @@ class Field(object):
                 raise AttributeError(str(e))
         return self.to_native(value)
 
-    # def field_to_python(self, data, field_name):
-    #     """
-    #     Given a dictionary and a field name, updates the dictionary
-    #     with it's deserialized value.
-    #     """
-    #     data = data or {}
-
     def get_component(self, obj, attr_name):
         '''
         Given an object, and an attribute name,
@@ -127,7 +120,7 @@ class DateField(Field):
     format = constants.DATE_FORMAT
 
     default_error_messages = {
-        'invalid': 'The value received for DateField (%s) is not a valid Date format.'
+        'invalid': 'The value received for DateField (%s) is not a valid Date format (%s).'
     }
 
     def __init__(self, format=None, *args, **kwargs):
@@ -161,7 +154,7 @@ class DateField(Field):
         try:
             value = datetime.strptime(value, self.format).date()
         except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % value
+            message = self.default_error_messages['invalid'] % (value, self.format)
             raise ValueError(message)
         return value
 
@@ -172,7 +165,7 @@ class DateTimeField(Field):
     format = constants.DATETIME_FORMAT
 
     default_error_messages = {
-        'invalid': 'The value received for DateTimeField (%s) is not a valid DateTime format.'
+        'invalid': 'The value received for DateTimeField (%s) is not a valid DateTime format (%s).'
     }
 
     def __init__(self, format=None, *args, **kwargs):
@@ -207,7 +200,7 @@ class DateTimeField(Field):
         try:
             value = datetime.strptime(value, self.format)
         except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % value
+            message = self.default_error_messages['invalid'] % (value, self.format)
             raise ValueError(message)
         return value
 

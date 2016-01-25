@@ -20,6 +20,7 @@ $ pip install git+git://github.com/localmed/pyserializer.git
 Usage
 -----
 
+Serializing a python object:
 ``` python
 from pyserializer.serializers import Serializer
 from pyserializer import fields
@@ -52,7 +53,7 @@ class CommentSerializer(Serializer):
             'create_time'
         )
 
-serializer = MySerializer(pyobject)
+serializer = CommentSerializer(pyobject)
 
 # Get the serialized data
 serializer.data
@@ -109,4 +110,4 @@ Features Currently Being Worked On
 Copyright
 ---------
 
-Copyright (c) 2014 [LocalMed, Inc.](http://www.localmed.com/). See LICENSE for details.
+Copyright (c) 2016 [LocalMed, Inc.](http://www.localmed.com/). See LICENSE for details.
