@@ -85,7 +85,7 @@ class BaseSerializer(object):
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
-        self._objects = None
+        # self._objects = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
@@ -95,7 +95,8 @@ class BaseSerializer(object):
 
     @property
     def object(self):
-        return self.restore_objects()
+        obj = self.restore_objects()
+        return obj
 
     def restore_objects(self, instance=None):
         """
@@ -105,7 +106,7 @@ class BaseSerializer(object):
             raise AttributeError(
                 'Cannot restore object unless `data_dict` value is set'
             )
-        # Create an instance of the serialized class
+        # Create an instance of the Serializer class
         instance = copy.deepcopy(self)
         restored_fields = self.restore_fields(self.data_dict)
         for field_name, field in six.iteritems(self.fields):
@@ -116,8 +117,9 @@ class BaseSerializer(object):
                 data=restored_fields
             )
 
-        self._objects = instance
-        return self._objects
+        # self._objects = instance
+        # return self._objects
+        return instance
 
     def restore_object(self, instance, field_name, field, data):
         if isinstance(field, Serializer):
@@ -214,7 +216,8 @@ class BaseSerializer(object):
                     serializable_obj = getattr(obj, field.source)
                 else:
                     serializable_obj = getattr(obj, key)
-                field.object = serializable_obj
+                field.instance = serializable_obj
+                # field.object = serializable_obj
                 value = field.data
             else:
                 field.initialize(parent=self, field_name=field_name)

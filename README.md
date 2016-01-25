@@ -50,7 +50,7 @@ class CommentSerializer(Serializer):
             'content',
             'versionName',
             'created_date',
-            'create_time'
+            'created_time'
         )
 
 serializer = CommentSerializer(pyobject)

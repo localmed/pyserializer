@@ -14,6 +14,7 @@ __all__ = [
     'DateField',
     'DateTimeField',
     'UUIDField',
+    'IntegerField',
 ]
 
 
@@ -140,15 +141,15 @@ class DateField(Field):
         if value in constants.EMPTY_VALUES:
             return None
 
-        if isinstance(value, date):
-            return value
-
         if isinstance(value, datetime):
             value = date(value.year, value.month, value.day)
             warnings.warn(
                 'DateField received a date object (%s).' % value,
                 RuntimeWarning
             )
+            return value
+
+        if isinstance(value, date):
             return value
 
         try:
