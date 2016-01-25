@@ -20,7 +20,7 @@ $ pip install git+git://github.com/localmed/pyserializer.git
 Usage
 -----
 
-Serializing a python object:
+Serialization Example:
 ``` python
 from pyserializer.serializers import Serializer
 from pyserializer import fields
@@ -57,6 +57,47 @@ serializer = CommentSerializer(pyobject)
 
 # Get the serialized data
 serializer.data
+```
+
+Deserialization Example:
+
+``` python
+from pyserializer.serializers import Serializer
+from pyserializer import fields
+
+
+class UserDeserializer(Serializer):
+    email = fields.CharField()
+    username = fields.CharField()
+
+    class Meta:
+        fields = (
+            'email',
+            'username'
+        )
+
+class CommentDeserializer(Serializer):
+    user = UserDeserializer()
+    content = fields.CharField()
+    created_date = fields.DateField(format='%Y-%m-%d')
+    created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
+
+    class Meta:
+        fields = (
+            'user',
+            'content',
+            'created_date',
+            'created_time',
+        )
+
+# The dictionary data to be serialized
+data_dict = {'user': {'email': 'foo@example.com', 'username': 'JohnSmith'}, 'content': 'foo bar', 'created_date': '2015-01-01', 'created_time': '2012-01-01T16:00:00Z'}
+
+deserializer = CommentDeserializer(data_dict=data_dict)
+deserializer.objects.user.username
+'JohnSmith'
+deserializer.objects.created_time
+datetime.datetime(2012, 1, 1, 16, 0)
 ```
 
 Feature Requests and Bug Reports
