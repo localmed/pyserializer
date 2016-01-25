@@ -76,6 +76,9 @@ class UserDeserializer(Serializer):
             'username'
         )
 
+    def __repr__(self):
+        return '<User(%r)>' % (self.username)
+
 class CommentDeserializer(Serializer):
     user = UserDeserializer()
     content = fields.CharField()
@@ -90,13 +93,16 @@ class CommentDeserializer(Serializer):
             'created_time',
         )
 
+    def __repr__(self):
+        return '<Comment(%r)>' % (self.content)
+
 # The dictionary data to be serialized
 data_dict = {'user': {'email': 'foo@example.com', 'username': 'JohnSmith'}, 'content': 'foo bar', 'created_date': '2015-01-01', 'created_time': '2012-01-01T16:00:00Z'}
 
 deserializer = CommentDeserializer(data_dict=data_dict)
-deserializer.objects.user.username
+deserializer.object.user.username
 'JohnSmith'
-deserializer.objects.created_time
+deserializer.object.created_time
 datetime.datetime(2012, 1, 1, 16, 0)
 ```
 

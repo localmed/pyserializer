@@ -94,7 +94,7 @@ class BaseSerializer(object):
             )
 
     @property
-    def objects(self):
+    def object(self):
         return self.restore_objects()
 
     def restore_objects(self, instance=None):
