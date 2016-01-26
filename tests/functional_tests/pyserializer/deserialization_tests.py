@@ -84,8 +84,75 @@ class TestNestedDeserialization(object):
         }
         deserializer = self.CommentDeserializer(data_dict=input_data)
         obj = deserializer.object
-        assert_equal(obj.user.email, input_data['user']['email'])
-        assert_equal(obj.user.username, input_data['user']['username'])
-        assert_equal(obj.content, input_data['content'])
+        assert_equal(obj.user.email, 'foo@example.com')
+        assert_equal(obj.user.username, 'JohnSmith')
+        assert_equal(obj.content, 'foo bar')
         assert_equal(obj.created_date, date(2015, 1, 1))
         assert_equal(obj.created_time, datetime(2012, 1, 1, 16, 0))
+
+
+class TestMultipleNestedDeserialization(object):
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            email = fields.CharField()
+            username = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'email',
+                    'username'
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.username)
+
+        class CommentDeserializer(Serializer):
+            content = fields.CharField()
+            commented_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
+
+            class Meta:
+                fields = (
+                    'content',
+                    'commented_at',
+                )
+
+            def __repr__(self):
+                return '<Comment(%r)>' % (self.content)
+
+        class PostDeserializer(Serializer):
+            user = UserDeserializer()
+            comment = CommentDeserializer()
+            posted_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
+
+            class Meta:
+                fields = (
+                    'user',
+                    'comment',
+                    'posted_at',
+                )
+
+            def __repr__(self):
+                return '<PostDeserializer(%r)>' % (self.user.username)
+
+        self.PostDeserializer = PostDeserializer
+
+    def test_multiple_nested_deserialization(self):
+        post_data = {
+            'user': {
+                'email': 'foo@example.com',
+                'username': 'JohnSmith'
+            },
+            'comment': {
+                'content': 'foo bar',
+                'commented_at': '2012-01-01T16:00:00Z'
+            },
+            'posted_at': '2012-01-01T16:00:00Z'
+        }
+        deserializer = self.PostDeserializer(data_dict=post_data)
+        obj = deserializer.object
+        assert_equal(obj.user.email, 'foo@example.com')
+        assert_equal(obj.user.username, 'JohnSmith')
+        assert_equal(obj.comment.content, 'foo bar')
+        assert_equal(obj.comment.commented_at, datetime(2012, 1, 1, 16, 0))
+        assert_equal(obj.posted_at, datetime(2012, 1, 1, 16, 0))
