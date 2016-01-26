@@ -83,24 +83,9 @@ class TestNestedDeserialization(object):
             'created_time': '2012-01-01T16:00:00Z'
         }
         deserializer = self.CommentDeserializer(data_dict=input_data)
-        set_trace()
-        assert_equal(
-            deserializer.object.user.email,
-            input_data['user']['email']
-        )
-        assert_equal(
-            deserializer.object.user.username,
-            input_data['user']['username']
-        )
-        assert_equal(
-            deserializer.object.content,
-            input_data['content']
-        )
-        assert_equal(
-            deserializer.object.created_date,
-            date(2015, 1, 1)
-        )
-        assert_equal(
-            deserializer.object.created_time,
-            datetime(2012, 1, 1, 16, 0)
-        )
+        obj = deserializer.object
+        assert_equal(obj.user.email, input_data['user']['email'])
+        assert_equal(obj.user.username, input_data['user']['username'])
+        assert_equal(obj.content, input_data['content'])
+        assert_equal(obj.created_date, date(2015, 1, 1))
+        assert_equal(obj.created_time, datetime(2012, 1, 1, 16, 0))

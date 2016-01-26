@@ -76,7 +76,7 @@ class BaseSerializer(object):
                  **kwargs):
         """
         instance: Python object which has to be serialized.
-        data_dict: Dictionary object which has to be serialized.
+        data_dict: Dictionary object which has to be deserialized.
         """
         self.instance = instance
         self.data_dict = data_dict
@@ -85,20 +85,18 @@ class BaseSerializer(object):
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
-        # self._objects = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
-                'instance should be a queryset or other iterable with \
+                '`instance` should be a queryset or other iterable with \
                 many=True'
             )
 
     @property
     def object(self):
-        obj = self.restore_objects()
-        return obj
+        return self.restore_object()
 
-    def restore_objects(self, instance=None):
+    def restore_object(self, instance=None):
         """
         Deserialize a dictionary of attributes into an object instance.
         """
@@ -110,28 +108,29 @@ class BaseSerializer(object):
         instance = copy.deepcopy(self)
         restored_fields = self.restore_fields(self.data_dict)
         for field_name, field in six.iteritems(self.fields):
-            self.restore_object(
+            self.set_field_value_on_instance(
                 instance=instance,
                 field_name=field_name,
                 field=field,
                 data=restored_fields
             )
-
-        # self._objects = instance
-        # return self._objects
         return instance
 
-    def restore_object(self, instance, field_name, field, data):
+    def set_field_value_on_instance(self, instance, field_name, field, data):
+        """
+        Fetches the filed value from data and,
+        sets the field name and value of the field on the instance.
+        """
         if isinstance(field, Serializer):
             inst = copy.deepcopy(field)
             for fldname, fld in six.iteritems(field.fields):
-                self.restore_object(
+                self.set_field_value_on_instance(
                     instance=inst,
                     field_name=fldname,
                     field=fld,
                     data=data.get(field_name)
                 )
-            return setattr(self, field_name, inst)
+            return setattr(instance, field_name, inst)
 
         return setattr(instance, field_name, data.get(field_name))
 
@@ -217,7 +216,6 @@ class BaseSerializer(object):
                 else:
                     serializable_obj = getattr(obj, key)
                 field.instance = serializable_obj
-                # field.object = serializable_obj
                 value = field.data
             else:
                 field.initialize(parent=self, field_name=field_name)
