@@ -85,6 +85,7 @@ class BaseSerializer(object):
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
+        self._object = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
             raise ValueError(
@@ -94,7 +95,9 @@ class BaseSerializer(object):
 
     @property
     def object(self):
-        return self.restore_object()
+        if not self._object:
+            self._object = self.restore_object()
+        return self._object
 
     def restore_object(self, instance=None):
         """
