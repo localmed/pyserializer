@@ -1,8 +1,11 @@
 import inspect
+import six
+
 
 __all__ = [
     'is_simple_callable',
     'is_iterable',
+    'force_str',
 ]
 
 
@@ -25,3 +28,13 @@ def is_iterable(obj):
     True if an object is iterable, else False
     '''
     return hasattr(obj, '__iter__')
+
+
+def force_str(value, encoding='utf-8'):
+    """
+    Forces the value to a str instance, decoding if necessary.
+    """
+    if six.PY3:
+        if isinstance(value, bytes):
+            return str(value, encoding)
+    return value
