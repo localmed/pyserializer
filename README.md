@@ -3,7 +3,7 @@
 pyserializer
 ============
 
-`pyserializer` is a simple python serialization library. It is an ORM agnostic library for converting python objects to and from native Python datatypes.
+`pyserializer` is a simple python serialization/deserialization library. It is an ORM agnostic library for converting python objects to native Python datatypes, and vice versa.
 
 Installation
 ------------
@@ -111,42 +111,12 @@ Feature Requests and Bug Reports
 
 Should all be reported on the Github Issue Tracker
 
+
 Contribution
 ------------
 
-Fork pyserializer on Github
-``` bash
-$ git clone https://github.com/localmed/pyserializer.git
-$ cd pyserializer
-```
-Install development requirements. It is highly recommended that you use a [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/), and activate the virtualenv before installing the requirements.
-``` bash
-$ pip install -r requirements.txt
-```
-Run tests with coverage.
-``` bash
-$ make unit_test
-```
-Run test Using Tox (Runs the tests in different supported python interpreter):
-``` bash
-$ tox
-```
+[Contribution](CONTRIBUTING.md)
 
-Run Lint:
-``` bash
-$ make lint
-```
-
-Create a new local branch to submit a pull request.
-``` bash
-$ git checkout -b name-of-feature
-```
-Commit your changes
-``` bash
-$ git commit -m "Detailed commit message"
-$ git push origin name-of-feature
-```
-Submit a pull request. Before submitting a pull request, make sure pull request add the functionality, it is tests and docs are updated
 
 Features Currently Being Worked On
 ----------------------------------

@@ -31,5 +31,8 @@ nosetests.xml
 /reports/
 .coverage
 
+# Sphinx documentation
+docs/_build/
+
 # Text editor
 *.sublime*
