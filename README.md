@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/localmed/pyserializer.svg?branch=development)](https://travis-ci.org/localmed/pyserializer)
 
+[![Documentation Status](https://readthedocs.org/projects/pyserializer/badge/?version=latest)](http://pyserializer.readthedocs.org/en/latest/?badge=latest)
+
+
 pyserializer
 ============
 
