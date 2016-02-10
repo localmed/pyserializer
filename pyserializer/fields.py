@@ -19,7 +19,8 @@ __all__ = [
 
 
 class Field(object):
-    """A base class for fields in a Serializer document.
+    """
+    A base class for fields in a Serializer document.
     """
 
     def __init__(self,
@@ -32,6 +33,7 @@ class Field(object):
 
         """
         :param source: The source field
+        :param label: The label field
         """
         self.source = source
         self.label = label
