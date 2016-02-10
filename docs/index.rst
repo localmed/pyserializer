@@ -32,6 +32,9 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
   A quick serialization example. Shows examples on how to define your serializer class and serialize a python object to native datatype.
 
 
+:doc:`deserialization`
+  A quick deserialization example. Shows examples on how to define your deserializer class and deserialize a native datatype to python object to.
+
 Contribute
 ----------
 Always looking for contributions, additions and improvements.
@@ -76,6 +79,14 @@ Push up your changes::
 Submit a pull request. Before submitting a pull request, make sure pull request add the functionality, it is tested and docs are updated.
 
 
+Offline Reading
+---------------
+
+Download the docs in `pdf <https://media.readthedocs.org/pdf/pyserializer/latest/pyserializer.pdf>`_
+or `epub <https://readthedocs.org/projects/pyserializer/downloads/epub/latest/>`_
+formats for offline reading.
+
+
 License
 -------
 
@@ -88,6 +99,7 @@ Contents:
    :numbered:
 
    serialization
+   deserialization
 
 Indices and tables
 ==================

@@ -6,7 +6,7 @@
 pyserializer
 ============
 
-`pyserializer` is a simple python serialization/deserialization library. It is an ORM agnostic library for converting python objects to native Python datatypes, and vice versa.
+`pyserializer` is a simple python serialization/deserialization library. It is an ORM agnostic library for converting python objects to native Python datatypes, and vice versa. Click [here](http://pyserializer.readthedocs.org/en/latest/) for documentation.
 
 Installation
 ------------
@@ -20,8 +20,8 @@ Or using last source:
 $ pip install git+git://github.com/localmed/pyserializer.git
 ```
 
-Usage
------
+Examples
+--------
 
 Serialization Example:
 ``` python
@@ -99,7 +99,7 @@ class CommentDeserializer(Serializer):
     def __repr__(self):
         return '<Comment(%r)>' % (self.content)
 
-# The dictionary data to be serialized
+# The dictionary data to be deserialized
 data_dict = {'user': {'email': 'foo@example.com', 'username': 'JohnSmith'}, 'content': 'foo bar', 'created_date': '2015-01-01', 'created_time': '2012-01-01T16:00:00Z'}
 
 deserializer = CommentDeserializer(data_dict=data_dict)

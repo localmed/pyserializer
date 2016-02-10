@@ -2,19 +2,19 @@
 Serialization
 =============
 
-
-
 Getting started
 ===============
 If you haven't installed pyserializer, simply use pip to install it like so::
 
     $ pip install pyserializer
 
-
 Defining our serailizer
 =======================
 
 Define a serializer class::
+
+    from pyserializer.serializers import Serializer
+    from pyserializer import fields
 
     class UserSerializer(Serializer):
         email = fields.CharField()
@@ -48,4 +48,3 @@ Get the serialized data::
 
     serializer = CommentSerializer(pyobject)
     serializer.data
-
