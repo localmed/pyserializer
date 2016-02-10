@@ -27,13 +27,14 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
     $ cd pyserializer
     $ python setup.py install
 
-
 :doc:`serialization`
   A quick serialization example. Shows examples on how to define your serializer class and serialize a python object to native datatype.
 
-
 :doc:`deserialization`
   A quick deserialization example. Shows examples on how to define your deserializer class and deserialize a native datatype to python object to.
+
+:doc:`apireference`
+  The complete API documentation.
 
 Contribute
 ----------
@@ -79,8 +80,8 @@ Push up your changes::
 Submit a pull request. Before submitting a pull request, make sure pull request add the functionality, it is tested and docs are updated.
 
 
-Offline Reading
----------------
+Offline Documentation
+---------------------
 
 Download the docs in `pdf <https://media.readthedocs.org/pdf/pyserializer/latest/pyserializer.pdf>`_
 or `epub <https://readthedocs.org/projects/pyserializer/downloads/epub/latest/>`_
@@ -94,12 +95,15 @@ The project is licensed under the MIT license.
 
 Contents:
 
-.. toctree::
-   :maxdepth: 2
-   :numbered:
 
-   serialization
-   deserialization
+.. toctree::
+    :maxdepth: 1
+    :numbered:
+    :hidden:
+
+    serialization
+    deserialization
+    apireference
 
 Indices and tables
 ==================
