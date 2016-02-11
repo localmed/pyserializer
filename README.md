@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/localmed/pyserializer.svg?branch=development)](https://travis-ci.org/localmed/pyserializer)
-
-[![Documentation Status](https://readthedocs.org/projects/pyserializer/badge/?version=latest)](http://pyserializer.readthedocs.org/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/localmed/pyserializer.svg?branch=development)](https://travis-ci.org/localmed/pyserializer) [![Documentation Status](https://readthedocs.org/projects/pyserializer/badge/?version=latest)](http://pyserializer.readthedocs.org/en/latest/?badge=latest)
 
 
 pyserializer
@@ -44,7 +42,7 @@ class CommentSerializer(Serializer):
     user = UserSerializer(source='user') # Eg: Nested serialization
     content = fields.CharField()
     versionName = fields.CharField(source='version.name') # Eg: specifying the source
-    created_date = fields.DateField(format='%d/%m/%y') # Eg: Specify you own datetime format. Defaults to ISO_8601
+    created_date = fields.DateField(format='%d/%m/%y') # Eg: Specify you own date format. Defaults to ISO_8601
     created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ') # Eg: Specify you own datetime format. Defaults to ISO_8601
 
     class Meta:
@@ -108,6 +106,13 @@ deserializer.object.user.username
 deserializer.object.created_time
 datetime.datetime(2012, 1, 1, 16, 0)
 ```
+
+Offline Documentation
+---------------------
+
+Download the docs in [pdf](https://media.readthedocs.org/pdf/pyserializer/latest/pyserializer.pdf)
+or [epub](https://readthedocs.org/projects/pyserializer/downloads/epub/latest/)
+formats for offline reading.
 
 Feature Requests and Bug Reports
 --------------------------------
