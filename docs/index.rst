@@ -79,6 +79,14 @@ Push up your changes::
 
 Submit a pull request. Before submitting a pull request, make sure pull request add the functionality, it is tested and docs are updated.
 
+Changes
+-------
+
+See the :doc:`changelog` for a full list of changes to pyserializer.
+
+.. note::  Always read `changelog <changelog>`_ documentation before
+    putting updates live in production.
+
 
 Offline Documentation
 ---------------------
@@ -104,6 +112,7 @@ Contents:
     serialization
     deserialization
     apireference
+    changelog
 
 Indices and tables
 ==================
