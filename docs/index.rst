@@ -5,7 +5,7 @@ pyserializer User Documentation
 pyserializer
 ============
 
-`pyserializer` is a simple python serialization/deserialization library. It is an ORM agnostic library for converting python objects to native Python datatypes, and vice versa.
+`pyserializer` is a simple Python serialization/deserialization library. It is an ORM agnostic library for converting Python objects to native Python datatypes, and vice versa.
 
 
 Installation
@@ -31,7 +31,10 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
   A quick serialization example. Shows examples on how to define your serializer class and serialize a python object to native datatype.
 
 :doc:`deserialization`
-  A quick deserialization example. Shows examples on how to define your deserializer class and deserialize a native datatype to python object to.
+  A quick deserialization example. Shows examples on how to define your deserializer class and deserialize a native datatype to python object.
+
+:doc:`custom`
+  A quick example on how you can create custom fields and validators.
 
 :doc:`apireference`
   The complete API documentation.
@@ -101,8 +104,6 @@ License
 
 The project is licensed under the MIT license.
 
-Contents:
-
 
 .. toctree::
     :maxdepth: 1
@@ -112,6 +113,7 @@ Contents:
     serialization
     deserialization
     apireference
+    custom
     changelog
 
 Indices and tables
