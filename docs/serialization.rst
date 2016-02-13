@@ -1,7 +1,7 @@
 =============
 Serialization
 =============
-Serializers allow python objects to be converted to native Python datatypes. The serialized data can then be easily rendered to json.
+Serializers allow Python objects to be converted to native Python datatypes. The serialized data can then be easily rendered to json.
 
 Getting started
 ===============
