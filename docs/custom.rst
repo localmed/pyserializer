@@ -4,8 +4,8 @@ Custom
 A quick example on how to create custom Fields and vaildators.
 
 
-Fields
-======
+Create Custom Fields
+====================
 
 Lets assume we want to create a custom UUID field. Creating a field only requires you to define the ``to_native`` and ``to_python`` on the field class. All custom fields should inherit from ``Field`` class. The class variables ``type_name`` and ``type_label`` are for meta information. Exaple UUID field::
 
@@ -41,8 +41,8 @@ Lets assume we want to create a custom UUID field. Creating a field only require
             return value
 
 
-Validators
-==========
+Create Custom Validators
+========================
 
 Lets assume we want to create a custom validator which validates a max value on the field. Creating a validator only requires you to define the ``__call__`` method on the validator class. All custom validators should inherit from ``BaseValidator`` class. The validator should raise ``ValidationError`` if the validation criteria is not met.
 Example MaxValueValidator::

@@ -2,6 +2,12 @@
 API Reference
 =============
 
+Serializer
+==========
+
+.. autoclass:: pyserializer.serializers.BaseSerializer
+   :members:
+
 Fields
 ======
 
