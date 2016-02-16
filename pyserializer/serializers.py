@@ -75,8 +75,9 @@ class BaseSerializer(object):
                  *args,
                  **kwargs):
         """
-        instance: Python object which has to be serialized.
-        data_dict: Dictionary object which has to be deserialized.
+        :param instance: Python object which has to be serialized.
+        :param data_dict: Dictionary object which has to be deserialized.
+        :param source: The source name.
         """
         self.instance = instance
         self.data_dict = data_dict
@@ -95,6 +96,10 @@ class BaseSerializer(object):
 
     @property
     def object(self):
+        """
+        The object that is created. Caches the object once created.
+        Uses the cached version next time when the object property is accessed.
+        """
         if not self._object:
             self._object = self.restore_object()
         return self._object
@@ -102,6 +107,9 @@ class BaseSerializer(object):
     def restore_object(self, instance=None):
         """
         Deserialize a dictionary of attributes into an object instance.
+
+        :param instance: The isntance on which the
+            deserialized object should be set.
         """
         if not self.data_dict:
             raise AttributeError(
@@ -121,7 +129,7 @@ class BaseSerializer(object):
 
     def set_field_value_on_instance(self, instance, field_name, field, data):
         """
-        Fetches the filed value from data and,
+        Fetches the field value from data and,
         sets the field name and value of the field on the instance.
         """
         if isinstance(field, Serializer):
@@ -140,6 +148,8 @@ class BaseSerializer(object):
     def restore_fields(self, data):
         """
         Converts a dictionary of data into a dictionary of deserialized fields.
+
+        :param data: The data dictionary passed in to be deserialized.
         """
         output = {}
 
@@ -158,6 +168,11 @@ class BaseSerializer(object):
         returns the deserialized version of the field data
         along with the field name.
         Calls the to_python method on each field.
+
+        :param field_name: The field name.
+        :param field: The field object.
+        :param data: The data dictionary which contains restored field objects.
+
         """
         if isinstance(field, Serializer):
             nested_field_name = field_name
@@ -176,7 +191,8 @@ class BaseSerializer(object):
 
     def get_fields(self):
         """
-        Returns the complete set of fields for the object as a dict.
+        Returns the complete set of fields defined in the Serializer
+        class as a dict.
         """
         # Maintain the order in which the fields were defined
         output = OrderedDict()
@@ -205,8 +221,9 @@ class BaseSerializer(object):
 
     def to_native(self, obj):
         """
-        Serializes objects.
-        Calls the field_to_native method on each fields.
+        Serializes objects. Calls the field_to_native method on each fields.
+
+        :param obj: The python object passed in to be serialized.
         """
         # Maintain the order in which the fields were defined
         output = OrderedDict()
@@ -230,6 +247,8 @@ class BaseSerializer(object):
     def data(self):
         """
         Returns the serialized data on the serializer.
+        Caches the data once created.
+        Uses the cached version next time when the data property is accessed.
         """
         if not self._data:
             obj = self.instance

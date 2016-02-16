@@ -19,6 +19,12 @@ __all__ = [
 
 
 class Field(object):
+    """
+    A base class for fields in a Serializer.
+    """
+
+    type_name = None
+    type_label = None
 
     def __init__(self,
                  source=None,
@@ -27,6 +33,14 @@ class Field(object):
                  required=True,
                  *args,
                  **kwargs):
+        """
+        :param source: (str) The source name for the field.
+            You can use dot syntax to specify nested source. Eg: 'version.name'
+        :param label: (optional) The label for the field.
+        :param help_text: (optional) The readable help text for the field.
+        :param required: (bool) If the field is required or not.
+            Defaults to True.
+        """
         self.source = source
         self.label = label
         self.help_text = help_text
@@ -108,23 +122,48 @@ class Field(object):
 
 
 class CharField(Field):
+    """
+    A string field.
+    """
+
     type_name = 'CharField'
     type_label = 'string'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,
+                 *args,
+                 **kwargs):
+        """
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
         super(CharField, self).__init__(*args, **kwargs)
 
 
 class DateField(Field):
+    """
+    A date field.
+    """
+
     type_name = 'DateField'
     type_label = 'date'
     format = constants.DATE_FORMAT
-
     default_error_messages = {
         'invalid': 'The value received for DateField (%s) is not a valid Date format (%s).'
     }
 
-    def __init__(self, format=None, *args, **kwargs):
+    def __init__(self,
+                 format=None,
+                 *args,
+                 **kwargs):
+        """
+        :param format: The format of the date. Defaults to ISO_8601.
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
         self.format = format or self.format
         super(DateField, self).__init__(*args, **kwargs)
 
@@ -161,15 +200,28 @@ class DateField(Field):
 
 
 class DateTimeField(Field):
+    """
+    A datetime field.
+    """
+
     type_name = 'DateTimeField'
     type_label = 'datetime'
     format = constants.DATETIME_FORMAT
-
     default_error_messages = {
         'invalid': 'The value received for DateTimeField (%s) is not a valid DateTime format (%s).'
     }
 
-    def __init__(self, format=None, *args, **kwargs):
+    def __init__(self,
+                 format=None,
+                 *args,
+                 **kwargs):
+        """
+        :param format: The format of the datetime. Defaults to ISO_8601.
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
         self.format = format or self.format
         super(DateTimeField, self).__init__(*args, **kwargs)
 
@@ -207,14 +259,25 @@ class DateTimeField(Field):
 
 
 class UUIDField(Field):
+    """
+    A UUID4 field.
+    """
+
     type_name = 'UUIDField'
     type_label = 'string'
-
     default_error_messages = {
         'invalid': 'The value received for UUIDField (%s) is not a valid UUID format.'
     }
 
-    def __init__(self, format=None, *args, **kwargs):
+    def __init__(self,
+                 *args,
+                 **kwargs):
+        """
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
         super(UUIDField, self).__init__(*args, **kwargs)
 
     def to_native(self, value):
@@ -238,14 +301,25 @@ class UUIDField(Field):
 
 
 class IntegerField(Field):
+    """
+    A integer field.
+    """
+
     type_name = 'IntegerField'
     type_label = 'integer'
-
     default_error_messages = {
         'invalid': 'The value received for IntegerField (%s) is not a valid Integer format.'
     }
 
-    def __init__(self, format=None, *args, **kwargs):
+    def __init__(self,
+                 *args,
+                 **kwargs):
+        """
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
         super(IntegerField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):

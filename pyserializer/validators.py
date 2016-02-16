@@ -21,6 +21,10 @@ __all__ = [
 
 
 class BaseValidator(object):
+    """
+    A base class for validators.
+    """
+
     default_error_messages = {
         'invalid': 'Not valid.'
     }
@@ -38,11 +42,16 @@ class BaseValidator(object):
 
 
 class RequiredValidator(BaseValidator):
+    """
+    A required field validator.
+    """
+
     default_error_messages = {
-        'invalid': 'Value is ruquired.'
+        'invalid': 'Value is required.'
     }
 
-    def __call__(self, value):
+    def __call__(self,
+                 value):
         if not self.is_valid(value):
             raise ValidationError(
                 self.default_error_messages['invalid']
@@ -55,11 +64,21 @@ class RequiredValidator(BaseValidator):
 
 
 class MaxValueValidator(BaseValidator):
+    """
+    A max value validator.
+    """
+
     default_error_messages = {
         'invalid': 'Ensure this value is less than or equal to %s.'
     }
 
-    def __init__(self, max_value):
+    def __init__(self,
+                 max_value):
+        """
+        :param max_value: (required) A maximum value in integer.
+            This will ensure that the value passed in to this validator
+            is less than or equal to max_value.
+        """
         self.max_value = max_value
 
     def __call__(self, value):
@@ -75,11 +94,21 @@ class MaxValueValidator(BaseValidator):
 
 
 class MinValueValidator(BaseValidator):
+    """
+    A min value validator.
+    """
+
     default_error_messages = {
         'invalid': 'Ensure this value is greater than or equal to %s.'
     }
 
-    def __init__(self, min_value):
+    def __init__(self,
+                 min_value):
+        """
+        :param min_value: (required) A minimum value in integer.
+            This will ensure that the value passed in to this validator
+            is greater than or equal to min_value.
+        """
         self.min_value = min_value
 
     def __call__(self, value):
@@ -95,11 +124,21 @@ class MinValueValidator(BaseValidator):
 
 
 class MaxLengthValidator(BaseValidator):
+    """
+    A mix lenght validator.
+    """
+
     default_error_messages = {
         'invalid': 'Ensure the value has atmost %s characters (it has %s characters).'
     }
 
-    def __init__(self, max_lenght):
+    def __init__(self,
+                 max_lenght):
+        """
+        :param max_lenght: (required) A maximum lenght value in integer.
+            This will ensure that the value passed in to this validator
+            will have atmost max_lenght characters.
+        """
         self.max_lenght = max_lenght
 
     def __call__(self, value):
@@ -115,11 +154,21 @@ class MaxLengthValidator(BaseValidator):
 
 
 class MinLengthValidator(BaseValidator):
+    """
+    A min lenght validator.
+    """
+
     default_error_messages = {
         'invalid': 'Ensure the value has atlest %s characters (it has %s characters).'
     }
 
-    def __init__(self, min_lenght):
+    def __init__(self,
+                 min_lenght):
+        """
+        :param min_lenght: (required) A minimum lenght value in integer.
+            This will ensure that the value passed in to this validator
+            will have atleast min_lenght characters.
+        """
         self.min_lenght = min_lenght
 
     def __call__(self, value):
@@ -135,6 +184,9 @@ class MinLengthValidator(BaseValidator):
 
 
 class EmailValidator(BaseValidator):
+    """
+    A email validator.
+    """
 
     default_error_messages = {
         'invalid': 'Not the value %s is a valid email address.'
@@ -146,7 +198,12 @@ class EmailValidator(BaseValidator):
     ''', re.I | re.VERBOSE)
     domain_blacklist = []
 
-    def __init__(self, domain_blacklist=None):
+    def __init__(self,
+                 domain_blacklist=None):
+        """
+        :param domain_blacklist: (optional) A list of domains which should be
+            considered as invalid. Defaults to an empty list.
+        """
         if domain_blacklist:
             self.domain_blacklist = domain_blacklist
 
