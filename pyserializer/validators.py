@@ -129,7 +129,8 @@ class MaxLengthValidator(BaseValidator):
     """
 
     default_error_messages = {
-        'invalid': 'Ensure the value has atmost %s characters (it has %s characters).'
+        'invalid': ('Ensure the value has atmost %s characters'
+                    '(it has %s characters).')
     }
 
     def __init__(self,
@@ -159,7 +160,8 @@ class MinLengthValidator(BaseValidator):
     """
 
     default_error_messages = {
-        'invalid': 'Ensure the value has atlest %s characters (it has %s characters).'
+        'invalid': ('Ensure the value has atlest %s characters'
+                    '(it has %s characters).')
     }
 
     def __init__(self,

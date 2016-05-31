@@ -2,6 +2,8 @@ import six
 import copy
 from collections import OrderedDict
 
+from pyserializer.exceptions import ValidationError
+
 
 __all__ = [
     'SerializerOptions',
@@ -87,12 +89,66 @@ class BaseSerializer(object):
         self.fields = self.get_fields()
         self._data = None
         self._object = None
+        self._errors = None
 
         if many and instance is not None and not hasattr(instance, '__iter__'):
-            raise ValueError(
-                '`instance` should be a queryset or other iterable with \
-                many=True'
+            msg = ('`instance` should be a queryset or other iterable with '
+                   'many=True')
+            raise ValueError(msg)
+
+    @property
+    def errors(self):
+        """
+        Runs the deserialization and returns any validations errors
+        Also, sets the object property if no errors occurred during validation.
+        """
+        if self._errors is None:
+            self.perform_validation(
+                fields=self.fields,
+                data=self.data_dict
             )
+        return self._errors
+
+    def is_valid(self):
+        return not self.errors
+
+    def perform_validation(self, fields, data):
+        """
+        Runs the validators specified on the fields.
+        """
+        # Reset the `self_errors` dict, and run the validation
+        self._errors = OrderedDict()
+        for field_name, field in six.iteritems(fields):
+            if isinstance(field, Serializer):
+                self.perform_validation(
+                    fields=field.fields,
+                    data=data.get(field_name)
+                )
+            else:
+                self.invoke_validators(
+                    field_name=field_name,
+                    validators=field.validators,
+                    value=data.get(field_name)
+                )
+
+    def invoke_validators(self,
+                          field_name,
+                          validators,
+                          value):
+        """
+        Calls the validators on the fields.
+        Catches the `ValidationError` raised and stores the
+        validation error message to `self._errors` object.
+        """
+        self._errors[field_name] = []
+        for validator in validators:
+            try:
+                validator(value)
+            except ValidationError as e:
+                self._errors[field_name].append(str(e))
+        # Delete the key from the dict, if no error is appended to the list
+        if not self._errors[field_name]:
+            del self._errors[field_name]
 
     @property
     def object(self):
@@ -127,7 +183,11 @@ class BaseSerializer(object):
             )
         return instance
 
-    def set_field_value_on_instance(self, instance, field_name, field, data):
+    def set_field_value_on_instance(self,
+                                    instance,
+                                    field_name,
+                                    field,
+                                    data):
         """
         Fetches the field value from data and,
         sets the field name and value of the field on the instance.
@@ -172,7 +232,6 @@ class BaseSerializer(object):
         :param field_name: The field name.
         :param field: The field object.
         :param data: The data dictionary which contains restored field objects.
-
         """
         if isinstance(field, Serializer):
             nested_field_name = field_name

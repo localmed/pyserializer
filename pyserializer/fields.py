@@ -25,12 +25,14 @@ class Field(object):
 
     type_name = None
     type_label = None
+    default_validators = []
 
     def __init__(self,
                  source=None,
                  label=None,
                  help_text=None,
                  required=True,
+                 validators=None,
                  *args,
                  **kwargs):
         """
@@ -45,6 +47,7 @@ class Field(object):
         self.label = label
         self.help_text = help_text
         self.required = required
+        self.validators = self.default_validators + (validators or [])
         self.empty = kwargs.pop('empty', '')
 
     def field_to_native(self, obj, field_name):
@@ -86,7 +89,8 @@ class Field(object):
         """
         if is_simple_callable(value):
             value = value()
-        if is_iterable(value) and not isinstance(value, (dict, six.string_types)):
+        if (is_iterable(value) and not
+                isinstance(value, (dict, six.string_types))):
             return [self.to_native(item) for item in value]
         if isinstance(value, dict):
             d = {}
@@ -150,7 +154,8 @@ class DateField(Field):
     type_label = 'date'
     format = constants.DATE_FORMAT
     default_error_messages = {
-        'invalid': 'The value received for DateField (%s) is not a valid Date format (%s).'
+        'invalid': ('The value received for DateField (%s) '
+                    'is not a valid Date format (%s).')
     }
 
     def __init__(self,
@@ -194,7 +199,9 @@ class DateField(Field):
         try:
             value = datetime.strptime(value, self.format).date()
         except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % (value, self.format)
+            message = (
+                self.default_error_messages['invalid'] % (value, self.format)
+            )
             raise ValueError(message)
         return value
 
@@ -208,7 +215,8 @@ class DateTimeField(Field):
     type_label = 'datetime'
     format = constants.DATETIME_FORMAT
     default_error_messages = {
-        'invalid': 'The value received for DateTimeField (%s) is not a valid DateTime format (%s).'
+        'invalid': ('The value received for DateTimeField (%s) '
+                    ' is not a valid DateTime format (%s).')
     }
 
     def __init__(self,
