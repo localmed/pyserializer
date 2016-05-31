@@ -18,6 +18,10 @@ Or using last source:
 $ pip install git+git://github.com/localmed/pyserializer.git
 ```
 
+Documentation
+-------------
+For full documentation and examples see (http://pyserializer.readthedocs.org/en/latest/).
+
 Offline Documentation
 ---------------------
 
