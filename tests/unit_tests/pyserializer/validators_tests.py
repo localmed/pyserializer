@@ -5,7 +5,7 @@ from pyserializer.exceptions import ValidationError
 from pyserializer import validators
 
 
-class TestRequiredValidator(object):
+class TestRequiredValidator:
 
     @raises(ValidationError)
     def test_required_validator_raises(self):
@@ -19,7 +19,7 @@ class TestRequiredValidator(object):
         assert_equal(validator(value), None)
 
 
-class TestMaxValueValidator(object):
+class TestMaxValueValidator:
 
     @raises(ValidationError)
     def test_max_value_validator_raises(self):
@@ -39,7 +39,7 @@ class TestMaxValueValidator(object):
         validator(value)
 
 
-class TestMinValueValidator(object):
+class TestMinValueValidator:
 
     @raises(ValidationError)
     def test_min_value_validator_raises(self):
@@ -59,7 +59,7 @@ class TestMinValueValidator(object):
         validator(value)
 
 
-class TestMaxLenghtValidator(object):
+class TestMaxLenghtValidator:
 
     @raises(ValidationError)
     def test_max_lenght_validator_raises(self):
@@ -73,7 +73,7 @@ class TestMaxLenghtValidator(object):
         assert_equal(validator(value), None)
 
 
-class TestMinLenghtValidator(object):
+class TestMinLenghtValidator:
 
     @raises(ValidationError)
     def test_min_lenght_validator_raises(self):
@@ -87,7 +87,7 @@ class TestMinLenghtValidator(object):
         assert_equal(validator(value), None)
 
 
-class TestEmailValidator(object):
+class TestEmailValidator:
 
     @raises(ValidationError)
     def test_email_with_blacklist_domain_raises(self):

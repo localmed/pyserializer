@@ -10,7 +10,7 @@ import six
 from pyserializer.fields import *  # flake8: noqa
 
 
-class TestField(object):
+class TestField:
 
     @patch.object(Field, 'to_native')
     @patch.object(Field, 'get_component')
@@ -39,7 +39,7 @@ class TestField(object):
         assert_equal(output, {'id': '123'})
 
 
-class TestCharField(object):
+class TestCharField:
 
     def test_to_native_with_string(self):
         output = CharField().to_native('123')
@@ -83,7 +83,7 @@ class TestDateField(object):
         assert_equal(output, None)
 
 
-class TestDateTimeField(object):
+class TestDateTimeField:
 
     def test_to_native(self):
         value = datetime(2014, 1, 1, 10, 30)
@@ -120,7 +120,7 @@ class TestDateTimeField(object):
         assert_equal(output, None)
 
 
-class TestUUIDField(object):
+class TestUUIDField:
 
     def test_to_native(self):
         value = uuid.uuid4()
@@ -138,7 +138,7 @@ class TestUUIDField(object):
         assert_equal(output, None)
 
 
-class TestIntegerField(object):
+class TestIntegerField:
 
     def test_to_python(self):
         value = '20'

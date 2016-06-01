@@ -8,7 +8,7 @@ from pyserializer.serializers import Serializer
 from pyserializer import fields
 
 
-class TestSerialization(object):
+class TestSerialization:
 
     def setup(self):
         class UserSerializer(Serializer):

@@ -7,7 +7,7 @@ from pyserializer.serializers import Serializer
 from pyserializer import fields
 
 
-class TestDeserialization(object):
+class TestDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -35,7 +35,7 @@ class TestDeserialization(object):
         assert_equal(deserializer.object.username, input_data['username'])
 
 
-class TestNestedDeserialization(object):
+class TestNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -90,7 +90,7 @@ class TestNestedDeserialization(object):
         assert_equal(obj.created_time, datetime(2012, 1, 1, 16, 0))
 
 
-class TestMultipleNestedDeserialization(object):
+class TestMultipleNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -157,7 +157,7 @@ class TestMultipleNestedDeserialization(object):
         assert_equal(obj.posted_at, datetime(2012, 1, 1, 16, 0))
 
 
-class TestInternalNestedDeserialization(object):
+class TestInternalNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
