@@ -261,7 +261,9 @@ class DateTimeField(Field):
         try:
             value = datetime.strptime(value, self.format)
         except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % (value, self.format)
+            message = (
+                self.default_error_messages['invalid'] % (value, self.format)
+            )
             raise ValueError(message)
         return value
 
@@ -274,7 +276,8 @@ class UUIDField(Field):
     type_name = 'UUIDField'
     type_label = 'string'
     default_error_messages = {
-        'invalid': 'The value received for UUIDField (%s) is not a valid UUID format.'
+        'invalid': ('The value received for UUIDField (%s)'
+                    ' is not a valid UUID format.')
     }
 
     def __init__(self,
@@ -316,7 +319,8 @@ class IntegerField(Field):
     type_name = 'IntegerField'
     type_label = 'integer'
     default_error_messages = {
-        'invalid': 'The value received for IntegerField (%s) is not a valid Integer format.'
+        'invalid': ('The value received for IntegerField (%s)'
+                    ' is not a valid Integer format.')
     }
 
     def __init__(self,
