@@ -6,7 +6,7 @@ setup(
     version='0.1.0',
     description='Simple python serialization library.',
     author='LocalMed',
-    author_email='ecordell@localmed.com, pete@localmed.com, joel.james@localmed.com',
+    author_email='ecordell@localmed.com, pete@localmed.com, joeljames1985@gmail.com',
     url='',
     license='MIT',
     packages=find_packages(exclude=['tests', 'tests.*']),
