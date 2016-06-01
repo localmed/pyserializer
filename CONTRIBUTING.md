@@ -31,9 +31,11 @@ Create a new local branch to submit a pull request.
 ``` bash
 $ git checkout -b name-of-feature
 ```
+
 Commit your changes
 ``` bash
 $ git commit -m "Detailed commit message"
 $ git push origin name-of-feature
 ```
+
 Submit a pull request. Before submitting a pull request, make sure pull request add the functionality, it is tested and docs are updated.

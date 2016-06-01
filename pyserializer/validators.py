@@ -191,7 +191,7 @@ class EmailValidator(BaseValidator):
     """
 
     default_error_messages = {
-        'invalid': 'Not the value %s is a valid email address.'
+        'invalid': '%s is an invalid email address.'
     }
     user_regex = re.compile(r"^[\w!#$%&'*+\-/=?^`{|}~.]+$")
     domain_regex = re.compile(r'''

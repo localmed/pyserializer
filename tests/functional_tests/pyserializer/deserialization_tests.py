@@ -2,7 +2,6 @@ from nose.tools import *  # flake8: noqa
 from mock import *  # flake8: noqa
 
 from datetime import date, datetime
-import json
 
 from pyserializer.serializers import Serializer
 from pyserializer import fields
