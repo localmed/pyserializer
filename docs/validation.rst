@@ -37,7 +37,7 @@ Lets assume we have a comment object and the comment object has a user attached 
     class CommentDeserializer(Serializer):
         user = UserDeserializer()
         content = fields.CharField(
-            validators=[validators.MaxLengthValidator(max_lenght=3)]
+            validators=[validators.MaxLengthValidator(max_length=3)]
         )
         rating = fields.IntegerField(
             validators=[validators.MinValueValidator(min_value=0)]

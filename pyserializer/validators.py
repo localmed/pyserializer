@@ -125,7 +125,7 @@ class MinValueValidator(BaseValidator):
 
 class MaxLengthValidator(BaseValidator):
     """
-    A mix lenght validator.
+    A mix length validator.
     """
 
     default_error_messages = {
@@ -134,29 +134,29 @@ class MaxLengthValidator(BaseValidator):
     }
 
     def __init__(self,
-                 max_lenght):
+                 max_length):
         """
-        :param max_lenght: (required) A maximum lenght value in integer.
+        :param max_length: (required) A maximum length value in integer.
             This will ensure that the value passed in to this validator
-            will have atmost max_lenght characters.
+            will have atmost max_length characters.
         """
-        self.max_lenght = max_lenght
+        self.max_length = max_length
 
     def __call__(self, value):
         value = force_str(value)
-        value_lenght = len(value)
-        if not self.is_valid(value_lenght):
+        value_length = len(value)
+        if not self.is_valid(value_length):
             message = self.default_error_messages['invalid'] \
-                % (self.max_lenght, value_lenght)
+                % (self.max_length, value_length)
             raise ValidationError(message)
 
-    def is_valid(self, value_lenght):
-        return value_lenght <= self.max_lenght
+    def is_valid(self, value_length):
+        return value_length <= self.max_length
 
 
 class MinLengthValidator(BaseValidator):
     """
-    A min lenght validator.
+    A min length validator.
     """
 
     default_error_messages = {
@@ -165,24 +165,24 @@ class MinLengthValidator(BaseValidator):
     }
 
     def __init__(self,
-                 min_lenght):
+                 min_length):
         """
-        :param min_lenght: (required) A minimum lenght value in integer.
+        :param min_length: (required) A minimum length value in integer.
             This will ensure that the value passed in to this validator
-            will have atleast min_lenght characters.
+            will have atleast min_length characters.
         """
-        self.min_lenght = min_lenght
+        self.min_length = min_length
 
     def __call__(self, value):
         value = force_str(value)
-        value_lenght = len(value)
-        if not self.is_valid(value_lenght):
+        value_length = len(value)
+        if not self.is_valid(value_length):
             message = self.default_error_messages['invalid'] \
-                % (self.min_lenght, value_lenght)
+                % (self.min_length, value_length)
             raise ValidationError(message)
 
-    def is_valid(self, value_lenght):
-        return value_lenght >= self.min_lenght
+    def is_valid(self, value_length):
+        return value_length >= self.min_length
 
 
 class EmailValidator(BaseValidator):
