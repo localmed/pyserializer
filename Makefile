@@ -4,7 +4,8 @@ help:
 
 	@echo "  unit_test        Runs unit tests and coverage."
 	@echo "  lint             Runs lint."
-
+	@echo "  docs             Buils the docs."
+	@echo "  open_docs        Opens the docs in the browser."
 
 .PHONY: unit_test
 unit_test:
@@ -13,3 +14,11 @@ unit_test:
 .PHONY: lint
 lint:
 	@bin/lint
+
+.PHONY: docs
+docs:
+	@cd docs && make html && cd ..
+
+.PHONY: open_docs
+open_docs:
+	@open ./docs/_build/html/index.html
