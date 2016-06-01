@@ -153,10 +153,13 @@ class BaseSerializer(object):
     @property
     def object(self):
         """
-        The object that is created. Caches the object once created.
+        The deserialized object.
+        Runs the validators and checks the error object
+        before deserializing the object .
+        Caches the object once created.
         Uses the cached version next time when the object property is accessed.
         """
-        if not self._object:
+        if not self._object and self.is_valid():
             self._object = self.restore_object()
         return self._object
 

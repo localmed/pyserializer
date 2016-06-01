@@ -5,6 +5,7 @@ from datetime import date, datetime
 
 from pyserializer.serializers import Serializer
 from pyserializer import fields
+from pyserializer import validators
 
 
 class TestDeserialization:
@@ -33,6 +34,35 @@ class TestDeserialization:
         deserializer = self.UserDeserializer(data_dict=input_data)
         assert_equal(deserializer.object.email, input_data['email'])
         assert_equal(deserializer.object.username, input_data['username'])
+
+
+class TestDoesNotDeserializationWithValidationErrors:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            email = fields.CharField(
+                validators=[validators.RequiredValidator()]
+            )
+            username = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'email',
+                    'username'
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.username)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_deserialization(self):
+        input_data = {
+            'username': 'JohnSmith'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        assert_false(deserializer.is_valid())
+        assert_equal(deserializer.object, None)
 
 
 class TestNestedDeserialization:
