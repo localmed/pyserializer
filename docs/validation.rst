@@ -70,5 +70,5 @@ Lets use the deserializer class we defined above to validate the data dict and d
     deserializer.is_valid()
     # False
     deserializer.errors
-    # OrderedDict([('email', ['Value is required.', 'None is an invalid email address.']), ('age', ['Ensure this value is less than or equal to 90.']), ('content', ['Ensure the value has atmost 3 characters(it has 7 characters).']), ('rating', ['Ensure this value is greater than or equal to 0.'])])
+    # OrderedDict([('email', [OrderedDict([('type_name', 'RequiredValidator'), ('type_label', 'required'), ('message', 'Value is required.')]), OrderedDict([('type_name', 'EmailValidator'), ('type_label', 'email'), ('message', 'None is an invalid email address.')])]), ('age', [OrderedDict([('type_name', 'MaxValueValidator'), ('type_label', 'max_value'), ('message', 'Ensure this value is less than or equal to 90.')])]), ('content', [OrderedDict([('type_name', 'MaxLengthValidator'), ('type_label', 'max_lenght'), ('message', 'Ensure the value has atmost 3 characters(it has 7 characters).')])]), ('rating', [OrderedDict([('type_name', 'MinValueValidator'), ('type_label', 'max_value'), ('message', 'Ensure this value is greater than or equal to 0.')])])])
 
