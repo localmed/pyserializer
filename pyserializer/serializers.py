@@ -145,7 +145,8 @@ class BaseSerializer(object):
             try:
                 validator(value)
             except ValidationError as e:
-                self._errors[field_name].append(str(e))
+                validator.error_dict['message'] = str(e)
+                self._errors[field_name].append(validator.error_dict)
         # Delete the key from the dict, if no error is appended to the list
         if not self._errors[field_name]:
             del self._errors[field_name]

@@ -1,6 +1,8 @@
 from nose.tools import *  # flake8: noqa
 from mock import *  # flake8: noqa
 
+from collections import OrderedDict
+
 from pyserializer.serializers import Serializer
 from pyserializer import fields
 from pyserializer import validators
@@ -102,17 +104,40 @@ class TestValidatorWithNestedSerialization:
         assert_true('rating' in error_keys)
         assert_equal(
             deserializer.errors['email'],
-            ['Value is required.', 'None is an invalid email address.']
+            [
+                OrderedDict([
+                    ('type_name', 'RequiredValidator'),
+                    ('type_label', 'required'),
+                    ('message', 'Value is required.')
+                ]),
+                OrderedDict([
+                    ('type_name', 'EmailValidator'),
+                    ('type_label', 'email'),
+                    ('message', 'None is an invalid email address.')
+                ])
+            ]
         )
         assert_equal(
             deserializer.errors['age'],
-            ['Ensure this value is less than or equal to 90.']
+            [OrderedDict([
+                ('type_name', 'MaxValueValidator'),
+                ('type_label', 'max_value'),
+                ('message', 'Ensure this value is less than or equal to 90.')
+            ])]
         )
         assert_equal(
             deserializer.errors['content'],
-            ['Ensure the value has atmost 3 characters(it has 7 characters).']
+            [OrderedDict([
+                ('type_name', 'MaxLengthValidator'),
+                ('type_label', 'max_lenght'),
+                ('message', 'Ensure the value has atmost 3 characters(it has 7 characters).')
+            ])]
         )
         assert_equal(
             deserializer.errors['rating'],
-            ['Ensure this value is greater than or equal to 0.']
+            [OrderedDict([
+                ('type_name', 'MinValueValidator'),
+                ('type_label', 'max_value'),
+                ('message', 'Ensure this value is greater than or equal to 0.')
+            ])]
         )
