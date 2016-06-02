@@ -99,7 +99,7 @@ class BaseSerializer(object):
     @property
     def errors(self):
         """
-        Runs the deserialization and returns any validations errors
+        Runs the deserialization and returns any validations errors.
         Also, sets the object property if no errors occurred during validation.
         """
         if self._errors is None:
