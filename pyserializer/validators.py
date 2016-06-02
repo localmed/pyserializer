@@ -148,7 +148,7 @@ class MaxLengthValidator(BaseValidator):
     A mix length validator.
     """
     type_name = 'MaxLengthValidator'
-    type_label = 'max_lenght'
+    type_label = 'max_length'
     default_error_messages = {
         'invalid': ('Ensure the value has atmost %s characters'
                     '(it has %s characters).')
@@ -183,7 +183,7 @@ class MinLengthValidator(BaseValidator):
     A min length validator.
     """
     type_name = 'MinLengthValidator'
-    type_label = 'min_lenght'
+    type_label = 'min_length'
     default_error_messages = {
         'invalid': ('Ensure the value has atlest %s characters'
                     '(it has %s characters).')

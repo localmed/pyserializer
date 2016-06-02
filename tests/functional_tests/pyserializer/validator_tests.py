@@ -129,7 +129,7 @@ class TestValidatorWithNestedSerialization:
             deserializer.errors['content'],
             [OrderedDict([
                 ('type_name', 'MaxLengthValidator'),
-                ('type_label', 'max_lenght'),
+                ('type_label', 'max_length'),
                 ('message', 'Ensure the value has atmost 3 characters(it has 7 characters).')
             ])]
         )
