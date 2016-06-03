@@ -1,10 +1,10 @@
 from nose.tools import *  # flake8: noqa
 from mock import *  # flake8: noqa
 
-from pyserializer.serializers import *  # flake8: noqa
+from pyserializer.serializers import Serializer
 
 
-class TestSerializer(object):
+class TestSerializer:
 
     @patch.object(Serializer, 'get_fields')
     def test_to_native(self, get_fields):

@@ -4,9 +4,9 @@ Deserialization
 Deserialization is similar to serialization. Deserialization allows native Python datatypes to be converted to Python objects.
 
 Defining our deserailizer
-========================
+=========================
 
-Lets consider a similar example taht we used in serialization example. Lets assume we have a comment object and the comment object has a user attached to it, Now lets define a deserializer class::
+Lets consider a similar example that we used in serialization example. Lets assume we have a comment object and the comment object has a user attached to it, Now lets define a deserializer class::
 
     from pyserializer.serializers import Serializer
     from pyserializer import fields
@@ -44,8 +44,8 @@ Lets consider a similar example taht we used in serialization example. Lets assu
             return '<Comment(%r)>' % (self.content)
 
 
-Deserailizer the object
-=======================
+Deserialize the object
+======================
 Lets use the deserializer class we defined above to deserialize a Python dict::
 
     data_dict = {
@@ -62,3 +62,6 @@ Lets use the deserializer class we defined above to deserialize a Python dict::
     'JohnSmith'
     deserializer.object.created_time
     datetime.datetime(2012, 1, 1, 16, 0)
+
+
+.. note:: If your fields in the deserializer class has validators defined, the   validators will run before deserializing the objects. If any error is encountered during the validation process, the deserializer.object will return None. You can check the error object on the deserializer (deserializer.errors) to get detailed information on the errors.

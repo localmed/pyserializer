@@ -33,6 +33,9 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
 :doc:`deserialization`
   A quick deserialization example. Shows examples on how to define your deserializer class and deserialize a native datatype to python object.
 
+:doc:`validation`
+  A quick validation example. Shows examples on how to define validators on your field and check errors encountered diring validation process.
+
 :doc:`custom`
   A quick example on how you can create custom fields and validators.
 
@@ -112,6 +115,7 @@ The project is licensed under the MIT license.
 
     serialization
     deserialization
+    validation
     apireference
     custom
     changelog

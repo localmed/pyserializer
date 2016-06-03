@@ -5,7 +5,7 @@ from pyserializer.exceptions import ValidationError
 from pyserializer import validators
 
 
-class TestRequiredValidator(object):
+class TestRequiredValidator:
 
     @raises(ValidationError)
     def test_required_validator_raises(self):
@@ -19,7 +19,7 @@ class TestRequiredValidator(object):
         assert_equal(validator(value), None)
 
 
-class TestMaxValueValidator(object):
+class TestMaxValueValidator:
 
     @raises(ValidationError)
     def test_max_value_validator_raises(self):
@@ -39,7 +39,7 @@ class TestMaxValueValidator(object):
         validator(value)
 
 
-class TestMinValueValidator(object):
+class TestMinValueValidator:
 
     @raises(ValidationError)
     def test_min_value_validator_raises(self):
@@ -59,35 +59,35 @@ class TestMinValueValidator(object):
         validator(value)
 
 
-class TestMaxLenghtValidator(object):
+class TestMaxLengthValidator:
 
     @raises(ValidationError)
-    def test_max_lenght_validator_raises(self):
+    def test_max_length_validator_raises(self):
         value = 'abcabc'
-        validator = validators.MaxLengthValidator(max_lenght=5)
+        validator = validators.MaxLengthValidator(max_length=5)
         validator(value)
 
-    def test_valid_max_lenght_validator(self):
+    def test_valid_max_length_validator(self):
         value = 'abc'
-        validator = validators.MaxLengthValidator(max_lenght=5)
+        validator = validators.MaxLengthValidator(max_length=5)
         assert_equal(validator(value), None)
 
 
-class TestMinLenghtValidator(object):
+class TestMinLengthValidator:
 
     @raises(ValidationError)
-    def test_min_lenght_validator_raises(self):
+    def test_min_length_validator_raises(self):
         value = 'a'
-        validator = validators.MinLengthValidator(min_lenght=5)
+        validator = validators.MinLengthValidator(min_length=5)
         validator(value)
 
-    def test_valid_min_lenght_validator(self):
+    def test_valid_min_length_validator(self):
         value = 'abc'
-        validator = validators.MinLengthValidator(min_lenght=3)
+        validator = validators.MinLengthValidator(min_length=3)
         assert_equal(validator(value), None)
 
 
-class TestEmailValidator(object):
+class TestEmailValidator:
 
     @raises(ValidationError)
     def test_email_with_blacklist_domain_raises(self):

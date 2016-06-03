@@ -57,6 +57,7 @@ Example MaxValueValidator::
 
         def __init__(self, max_value):
             self.max_value = max_value
+            super(MaxValueValidator, self).__init__(*args, **kwargs)
 
         def __call__(self, value):
             if not self.is_valid(value):

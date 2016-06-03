@@ -2,13 +2,13 @@ from nose.tools import *  # flake8: noqa
 from mock import *  # flake8: noqa
 
 from datetime import date, datetime
-import json
 
 from pyserializer.serializers import Serializer
 from pyserializer import fields
+from pyserializer import validators
 
 
-class TestDeserialization(object):
+class TestDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -36,7 +36,36 @@ class TestDeserialization(object):
         assert_equal(deserializer.object.username, input_data['username'])
 
 
-class TestNestedDeserialization(object):
+class TestDoesNotDeserializationWithValidationErrors:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            email = fields.CharField(
+                validators=[validators.RequiredValidator()]
+            )
+            username = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'email',
+                    'username'
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.username)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_deserialization(self):
+        input_data = {
+            'username': 'JohnSmith'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        assert_false(deserializer.is_valid())
+        assert_equal(deserializer.object, None)
+
+
+class TestNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -91,7 +120,7 @@ class TestNestedDeserialization(object):
         assert_equal(obj.created_time, datetime(2012, 1, 1, 16, 0))
 
 
-class TestMultipleNestedDeserialization(object):
+class TestMultipleNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -158,7 +187,7 @@ class TestMultipleNestedDeserialization(object):
         assert_equal(obj.posted_at, datetime(2012, 1, 1, 16, 0))
 
 
-class TestInternalNestedDeserialization(object):
+class TestInternalNestedDeserialization:
 
     def setup(self):
         class UserDeserializer(Serializer):

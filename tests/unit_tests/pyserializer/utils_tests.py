@@ -4,7 +4,7 @@ from mock import *  # flake8: noqa
 from pyserializer.utils import *  # flake8: noqa
 
 
-class TestUtil(object):
+class TestUtil:
 
     def test_is_simple_callable_with_function(self):
         def foo():
