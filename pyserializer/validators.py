@@ -1,8 +1,11 @@
 import six
 import re
+import uuid
+import warnings
 from encodings import idna
 from decimal import Decimal
 from collections import OrderedDict
+from datetime import datetime, date
 from pyserializer.exceptions import ValidationError
 from pyserializer.utils import force_str
 from pyserializer import constants
@@ -16,6 +19,9 @@ __all__ = [
     'MaxLengthValidator',
     'MinLengthValidator',
     'EmailValidator',
+    'IntegerValidator',
+    'UUIDValidator',
+    'DateTimeOrDateValidator',
 ]
 
 
@@ -272,3 +278,89 @@ class EmailValidator(BaseValidator):
         if not self.domain_regex.match(domain_part):
             return False
         return True
+
+
+class IntegerValidator(BaseValidator):
+    """
+    A integer validator.
+    """
+    type_name = 'IntegerValidator'
+    type_label = 'integer'
+    default_error_messages = {
+        'invalid': ('Ensure the value %s is of type integer.')
+    }
+
+    def __call__(self, value):
+        if not self.is_valid(value):
+            message = self.default_error_messages['invalid'] % (value)
+            raise ValidationError(message)
+
+    def is_valid(self, value):
+        try:
+            int(str(value))
+            return True
+        except (ValueError, TypeError):
+            return False
+
+
+class UUIDValidator(BaseValidator):
+    """
+    A UUID validator.
+    """
+    type_name = 'UUIDValidator'
+    type_label = 'uuid'
+    default_error_messages = {
+        'invalid': ('Ensure the value %s is of type uuid.')
+    }
+
+    def __call__(self, value):
+        if not self.is_valid(value):
+            message = self.default_error_messages['invalid'] % (value)
+            raise ValidationError(message)
+
+    def is_valid(self, value):
+        if isinstance(value, uuid.UUID):
+            return True
+        try:
+            uuid.UUID(str(value))
+            return True
+        except (ValueError, TypeError):
+            return False
+
+
+class DateTimeOrDateValidator(BaseValidator):
+    """
+    A DateTime validator.
+    """
+    type_name = 'DateTimeValidator'
+    type_label = 'date_time'
+    default_error_messages = {
+        'invalid': ('Ensure the DateTime value %s is of format %s.')
+    }
+    format = constants.DATETIME_FORMAT
+
+    def __init__(self,
+                 format=None,
+                 *args,
+                 **kwargs):
+        """
+        :param format: (optional) The format of the datetime.
+            Defaults to ISO_8601.
+        """
+        self.format = format or self.format
+        super(DateTimeOrDateValidator, self).__init__(*args, **kwargs)
+
+    def __call__(self, value):
+        if not self.is_valid(value):
+            message = self.default_error_messages['invalid'] \
+                % (value, self.format)
+            raise ValidationError(message)
+
+    def is_valid(self, value):
+        if isinstance(value, (datetime, date)):
+            return True
+        try:
+            datetime.strptime(value, self.format)
+            return True
+        except (ValueError, TypeError):
+            return False
