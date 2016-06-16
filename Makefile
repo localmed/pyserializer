@@ -17,7 +17,7 @@ lint:
 
 .PHONY: docs
 docs:
-	@cd docs && make html && cd ..
+	@cd docs && make html && cd .. && open ./docs/_build/html/index.html
 
 .PHONY: open_docs
 open_docs:

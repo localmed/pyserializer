@@ -15,10 +15,14 @@ Lets assume we want to create a custom UUID field. Creating a field only require
         type_name = 'UUIDField'
         type_label = 'string'
         default_error_messages = {
-            'invalid': 'The value received for UUIDField (%s) is not a valid UUID format.'
+            'invalid': ('The value received for UUIDField (%s)'
+                        ' is not a valid UUID format.')
         }
+        default_validators = [validators.UUIDValidator()] # All the validations should be handeled by the validator.
 
-        def __init__(self, *args, **kwargs):
+        def __init__(self,
+                     *args,
+                     **kwargs):
             super(UUIDField, self).__init__(*args, **kwargs)
 
         def to_native(self, value):
@@ -29,16 +33,9 @@ Lets assume we want to create a custom UUID field. Creating a field only require
         def to_python(self, value):
             if value in constants.EMPTY_VALUES:
                 return None
-
             if isinstance(value, uuid.UUID):
                 return value
-
-            try:
-                value = uuid.UUID(str(value))
-            except (ValueError, TypeError):
-                message = self.default_error_messages['invalid'] % value
-                raise ValueError(message)
-            return value
+            return uuid.UUID(str(value))
 
 
 Create Custom Validators
