@@ -109,11 +109,6 @@ class TestValidatorWithNestedSerialization:
                     ('type_name', 'RequiredValidator'),
                     ('type_label', 'required'),
                     ('message', 'Value is required.')
-                ]),
-                OrderedDict([
-                    ('type_name', 'EmailValidator'),
-                    ('type_label', 'email'),
-                    ('message', 'None is an invalid email address.')
                 ])
             ]
         )

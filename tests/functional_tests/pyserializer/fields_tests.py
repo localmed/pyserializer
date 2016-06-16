@@ -193,3 +193,9 @@ class TestIntegerField:
         deserializer.is_valid()
         assert_false(deserializer.is_valid())
         assert_true('age' in deserializer.errors.keys())
+
+    def test_integer_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())

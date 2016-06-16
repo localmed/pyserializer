@@ -1,7 +1,6 @@
 import six
 import re
 import uuid
-import warnings
 from encodings import idna
 from decimal import Decimal
 from collections import OrderedDict
@@ -47,7 +46,9 @@ class BaseValidator(object):
         ])
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             raise ValidationError(
                 self.default_error_messages['invalid']
             )
@@ -68,8 +69,7 @@ class RequiredValidator(BaseValidator):
         'invalid': 'Value is required.'
     }
 
-    def __call__(self,
-                 value):
+    def __call__(self, value):
         if not self.is_valid(value):
             raise ValidationError(
                 self.default_error_messages['invalid']
@@ -104,7 +104,9 @@ class MaxValueValidator(BaseValidator):
         super(MaxValueValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             raise ValidationError(
                 self.default_error_messages['invalid'] % self.max_value
             )
@@ -138,7 +140,9 @@ class MinValueValidator(BaseValidator):
         super(MinValueValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             raise ValidationError(
                 self.default_error_messages['invalid'] % self.min_value
             )
@@ -173,12 +177,15 @@ class MaxLengthValidator(BaseValidator):
         super(MaxLengthValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        value = force_str(value)
-        value_length = len(value)
-        if not self.is_valid(value_length):
-            message = self.default_error_messages['invalid'] \
-                % (self.max_length, value_length)
-            raise ValidationError(message)
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES:
+            value = force_str(value)
+            value_length = len(value)
+            if not self.is_valid(value_length):
+                message = self.default_error_messages['invalid'] \
+                    % (self.max_length, value_length)
+                raise ValidationError(message)
 
     def is_valid(self, value_length):
         return value_length <= self.max_length
@@ -208,12 +215,15 @@ class MinLengthValidator(BaseValidator):
         super(MinLengthValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        value = force_str(value)
-        value_length = len(value)
-        if not self.is_valid(value_length):
-            message = self.default_error_messages['invalid'] \
-                % (self.min_length, value_length)
-            raise ValidationError(message)
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES:
+            value = force_str(value)
+            value_length = len(value)
+            if not self.is_valid(value_length):
+                message = self.default_error_messages['invalid'] \
+                    % (self.min_length, value_length)
+                raise ValidationError(message)
 
     def is_valid(self, value_length):
         return value_length >= self.min_length
@@ -248,11 +258,14 @@ class EmailValidator(BaseValidator):
         super(EmailValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        value = force_str(value)
-        if not self.is_valid(value):
-            message = self.default_error_messages['invalid'] \
-                % (value)
-            raise ValidationError(message)
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES:
+            value = force_str(value)
+            if not self.is_valid(value):
+                message = self.default_error_messages['invalid'] \
+                    % (value)
+                raise ValidationError(message)
 
     def is_valid(self, value):
         if not value or '@' not in value:
@@ -291,7 +304,9 @@ class IntegerValidator(BaseValidator):
     }
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             message = self.default_error_messages['invalid'] % (value)
             raise ValidationError(message)
 
