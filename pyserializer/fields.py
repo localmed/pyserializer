@@ -6,6 +6,7 @@ import uuid
 from pyserializer.utils import is_simple_callable, is_iterable
 from pyserializer import constants
 from pyserializer.constants import ISO_8601
+from pyserializer import validators
 
 
 __all__ = [
@@ -170,7 +171,12 @@ class DateField(Field):
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        super(DateField, self).__init__(*args, **kwargs)
+        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        super(DateField, self).__init__(
+            validators=default_validators,
+            *args,
+            **kwargs
+        )
 
     def to_native(self, value):
         if value is None or self.format is None:
@@ -184,7 +190,6 @@ class DateField(Field):
     def to_python(self, value):
         if value in constants.EMPTY_VALUES:
             return None
-
         if isinstance(value, datetime):
             value = date(value.year, value.month, value.day)
             warnings.warn(
@@ -192,18 +197,9 @@ class DateField(Field):
                 RuntimeWarning
             )
             return value
-
         if isinstance(value, date):
             return value
-
-        try:
-            value = datetime.strptime(value, self.format).date()
-        except (ValueError, TypeError):
-            message = (
-                self.default_error_messages['invalid'] % (value, self.format)
-            )
-            raise ValueError(message)
-        return value
+        return datetime.strptime(value, self.format).date()
 
 
 class DateTimeField(Field):
@@ -231,7 +227,12 @@ class DateTimeField(Field):
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        super(DateTimeField, self).__init__(*args, **kwargs)
+        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        super(DateTimeField, self).__init__(
+            validators=default_validators,
+            *args,
+            **kwargs
+        )
 
     def to_native(self, value):
         if value is None or self.format is None:
@@ -246,10 +247,8 @@ class DateTimeField(Field):
     def to_python(self, value):
         if value in constants.EMPTY_VALUES:
             return None
-
         if isinstance(value, datetime):
             return value
-
         if isinstance(value, date):
             value = datetime(value.year, value.month, value.day)
             warnings.warn(
@@ -257,15 +256,7 @@ class DateTimeField(Field):
                 RuntimeWarning
             )
             return value
-
-        try:
-            value = datetime.strptime(value, self.format)
-        except (ValueError, TypeError):
-            message = (
-                self.default_error_messages['invalid'] % (value, self.format)
-            )
-            raise ValueError(message)
-        return value
+        return datetime.strptime(value, self.format)
 
 
 class UUIDField(Field):
@@ -279,6 +270,7 @@ class UUIDField(Field):
         'invalid': ('The value received for UUIDField (%s)'
                     ' is not a valid UUID format.')
     }
+    default_validators = [validators.UUIDValidator()]
 
     def __init__(self,
                  *args,
@@ -299,16 +291,9 @@ class UUIDField(Field):
     def to_python(self, value):
         if value in constants.EMPTY_VALUES:
             return None
-
         if isinstance(value, uuid.UUID):
             return value
-
-        try:
-            value = uuid.UUID(str(value))
-        except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % value
-            raise ValueError(message)
-        return value
+        return uuid.UUID(str(value))
 
 
 class IntegerField(Field):
@@ -322,6 +307,7 @@ class IntegerField(Field):
         'invalid': ('The value received for IntegerField (%s)'
                     ' is not a valid Integer format.')
     }
+    default_validators = [validators.IntegerValidator()]
 
     def __init__(self,
                  *args,
@@ -337,10 +323,4 @@ class IntegerField(Field):
     def to_python(self, value):
         if value in constants.EMPTY_VALUES:
             return None
-
-        try:
-            value = int(str(value))
-        except (ValueError, TypeError):
-            message = self.default_error_messages['invalid'] % value
-            raise ValueError(message)
-        return value
+        return int(value)

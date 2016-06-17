@@ -15,10 +15,14 @@ Lets assume we want to create a custom UUID field. Creating a field only require
         type_name = 'UUIDField'
         type_label = 'string'
         default_error_messages = {
-            'invalid': 'The value received for UUIDField (%s) is not a valid UUID format.'
+            'invalid': ('The value received for UUIDField (%s)'
+                        ' is not a valid UUID format.')
         }
+        default_validators = [validators.UUIDValidator()] # All the validations should be handeled by the validator.
 
-        def __init__(self, *args, **kwargs):
+        def __init__(self,
+                     *args,
+                     **kwargs):
             super(UUIDField, self).__init__(*args, **kwargs)
 
         def to_native(self, value):
@@ -29,16 +33,9 @@ Lets assume we want to create a custom UUID field. Creating a field only require
         def to_python(self, value):
             if value in constants.EMPTY_VALUES:
                 return None
-
             if isinstance(value, uuid.UUID):
                 return value
-
-            try:
-                value = uuid.UUID(str(value))
-            except (ValueError, TypeError):
-                message = self.default_error_messages['invalid'] % value
-                raise ValueError(message)
-            return value
+            return uuid.UUID(str(value))
 
 
 Create Custom Validators
@@ -50,17 +47,33 @@ Example MaxValueValidator::
     from pyserializer.validators import BaseValidator
     from pyserializer.exceptions import ValidationError
 
+
     class MaxValueValidator(BaseValidator):
+        """
+        A max value validator.
+        """
+        type_name = 'MaxValueValidator'
+        type_label = 'max_value'
         default_error_messages = {
             'invalid': 'Ensure this value is less than or equal to %s.'
         }
 
-        def __init__(self, max_value):
+        def __init__(self,
+                     max_value,
+                     *args,
+                     **kwargs):
+            """
+            :param max_value: (required) A maximum value in integer.
+                This will ensure that the value passed in to this validator
+                is less than or equal to max_value.
+            """
             self.max_value = max_value
             super(MaxValueValidator, self).__init__(*args, **kwargs)
 
         def __call__(self, value):
-            if not self.is_valid(value):
+            # Only run the validator
+            # if the value is not empty ie: (None, '', [], (), {})
+            if value not in constants.EMPTY_VALUES and not self.is_valid(value):
                 raise ValidationError(
                     self.default_error_messages['invalid'] % self.max_value
                 )
