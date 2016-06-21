@@ -19,6 +19,7 @@ __all__ = [
     'NumberField',
     'IntegerField',
     'FloatField',
+    'DictField',
 ]
 
 
@@ -345,3 +346,18 @@ class DecimalField(NumberField):
     type_name = 'DecimalField'
     type_label = 'decimal'
     default_validators = [validators.DecimalValidator()]
+
+
+class DictField(Field):
+    """
+    A dict field.
+    """
+
+    type_name = 'DictField'
+    type_label = 'dict'
+    default_validators = [validators.DictValidator()]
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+        return value

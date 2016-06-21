@@ -3,6 +3,7 @@ import re
 import uuid
 import copy
 import decimal
+import collections
 from encodings import idna
 from decimal import Decimal
 from collections import OrderedDict
@@ -24,6 +25,7 @@ __all__ = [
     'IntegerValidator',
     'FloatValidator',
     'DecimalValidator',
+    'DictValidator',
     'UUIDValidator',
     'DateTimeOrDateValidator',
 ]
@@ -378,6 +380,28 @@ class DecimalValidator(NumberValidator):
             return False
 
 
+class DictValidator(BaseValidator):
+    """
+    A dict validator.
+    """
+    type_name = 'DictValidator'
+    type_label = 'dict'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type dict.')
+    }
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        if isinstance(value, collections.Mapping):
+            return True
+        return False
+
+
 class UUIDValidator(BaseValidator):
     """
     A UUID validator.
@@ -389,7 +413,9 @@ class UUIDValidator(BaseValidator):
     }
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             self.fail('invalid', value=value)
 
     def is_valid(self, value):
@@ -425,7 +451,9 @@ class DateTimeOrDateValidator(BaseValidator):
         super(DateTimeOrDateValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        if not self.is_valid(value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
             self.fail(
                 'invalid',
                 value=value,

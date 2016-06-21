@@ -282,3 +282,44 @@ class TestDecimalField:
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()
         assert_true(deserializer.is_valid())
+
+
+class TestDictField:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            preference = fields.DictField()
+
+            class Meta:
+                fields = (
+                    'preference',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.preference)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_dict_field_valid(self):
+        input_data = {
+            'preference': {'contact': 'email'}
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.preference, {'contact': 'email'})
+
+    def test_dict_field_with_error(self):
+        input_data = {
+            'preference': 'wrong_field'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_true('preference' in deserializer.errors.keys())
+
+    def test_dict_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
