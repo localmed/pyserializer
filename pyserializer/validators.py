@@ -19,7 +19,9 @@ __all__ = [
     'MaxLengthValidator',
     'MinLengthValidator',
     'EmailValidator',
+    'NumberValidator',
     'IntegerValidator',
+    'FloatValidator',
     'UUIDValidator',
     'DateTimeOrDateValidator',
 ]
@@ -304,14 +306,15 @@ class EmailValidator(BaseValidator):
         return True
 
 
-class IntegerValidator(BaseValidator):
+class NumberValidator(BaseValidator):
     """
-    A integer validator.
+    A number validator. The default `num_type` is `float`
     """
-    type_name = 'IntegerValidator'
-    type_label = 'integer'
+    num_type = float
+    type_name = 'NumberValidator'
+    type_label = 'number'
     default_error_messages = {
-        'invalid': ('Ensure the value {value} is of type integer.')
+        'invalid': ('Not a valid number.')
     }
 
     def __call__(self, value):
@@ -322,10 +325,34 @@ class IntegerValidator(BaseValidator):
 
     def is_valid(self, value):
         try:
-            int(str(value))
+            self.num_type(str(value))
             return True
         except (ValueError, TypeError):
             return False
+
+
+class IntegerValidator(NumberValidator):
+    """
+    A integer validator.
+    """
+    num_type = int
+    type_name = 'IntegerValidator'
+    type_label = 'integer'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type integer.')
+    }
+
+
+class FloatValidator(NumberValidator):
+    """
+    A float validator.
+    """
+    num_type = float
+    type_name = 'FloatValidator'
+    type_label = 'float'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type float.')
+    }
 
 
 class UUIDValidator(BaseValidator):

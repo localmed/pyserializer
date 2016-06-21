@@ -199,3 +199,44 @@ class TestIntegerField:
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()
         assert_true(deserializer.is_valid())
+
+
+class TestFloatField:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            score = fields.FloatField()
+
+            class Meta:
+                fields = (
+                    'score',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.score)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_float_field_valid(self):
+        input_data = {
+            'score': '10.20'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.score, 10.20)
+
+    def test_float_field_with_error(self):
+        input_data = {
+            'score': 'wrong_field'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_true('score' in deserializer.errors.keys())
+
+    def test_float_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
