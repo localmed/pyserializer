@@ -2,6 +2,7 @@ import six
 from datetime import datetime, date
 import warnings
 import uuid
+import decimal
 
 from pyserializer.utils import is_simple_callable, is_iterable
 from pyserializer import constants
@@ -333,3 +334,14 @@ class FloatField(NumberField):
     type_name = 'FloatField'
     type_label = 'float'
     default_validators = [validators.FloatValidator()]
+
+
+class DecimalField(NumberField):
+    """
+    A decimal field.
+    """
+
+    num_type = decimal.Decimal
+    type_name = 'DecimalField'
+    type_label = 'decimal'
+    default_validators = [validators.DecimalValidator()]

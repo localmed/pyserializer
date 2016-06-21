@@ -3,6 +3,7 @@ from mock import *  # flake8: noqa
 
 import uuid
 from datetime import datetime, date
+import decimal
 
 from pyserializer import fields
 from pyserializer.serializers import Serializer
@@ -236,6 +237,47 @@ class TestFloatField:
         assert_true('score' in deserializer.errors.keys())
 
     def test_float_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+
+
+class TestDecimalField:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            amount = fields.DecimalField()
+
+            class Meta:
+                fields = (
+                    'amount',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.amount)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_decimal_field_valid(self):
+        input_data = {
+            'amount': '10.20'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.amount, decimal.Decimal('10.20'))
+
+    def test_decimal_field_with_error(self):
+        input_data = {
+            'amount': 'wrong_field'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_true('amount' in deserializer.errors.keys())
+
+    def test_decimal_field_with_empty_value(self):
         input_data = {}
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()

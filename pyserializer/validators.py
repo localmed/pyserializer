@@ -2,6 +2,7 @@ import six
 import re
 import uuid
 import copy
+import decimal
 from encodings import idna
 from decimal import Decimal
 from collections import OrderedDict
@@ -22,6 +23,7 @@ __all__ = [
     'NumberValidator',
     'IntegerValidator',
     'FloatValidator',
+    'DecimalValidator',
     'UUIDValidator',
     'DateTimeOrDateValidator',
 ]
@@ -353,6 +355,27 @@ class FloatValidator(NumberValidator):
     default_error_messages = {
         'invalid': ('Ensure the value {value} is of type float.')
     }
+
+
+class DecimalValidator(NumberValidator):
+    """
+    A decimal validator.
+    """
+    num_type = decimal.Decimal
+    type_name = 'DecimalValidator'
+    type_label = 'decimal'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type decimal.')
+    }
+
+    def is_valid(self, value):
+        """
+        override `is_valid' method of parent class `Number`
+        """
+        try:
+            return super(DecimalValidator, self).is_valid(value)
+        except decimal.InvalidOperation:
+            return False
 
 
 class UUIDValidator(BaseValidator):
