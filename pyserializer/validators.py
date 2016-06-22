@@ -29,6 +29,7 @@ __all__ = [
     'UUIDValidator',
     'DateTimeValidator',
     'DateValidator',
+    'BooleanValidator',
 ]
 
 
@@ -481,3 +482,29 @@ class DateValidator(DateTimeValidator):
         'invalid': ('Ensure the Date value {value} is of format {format}.')
     }
     format = constants.DATETIME_FORMAT
+
+
+class BooleanValidator(BaseValidator):
+    """
+    A Boolean validator.
+    """
+    type_name = 'BooleanValidator'
+    type_label = 'boolean'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is a boolean.')
+    }
+    truthy = set(('t', 'T', 'true', 'True', 'TRUE', '1', 1, True))
+    falsy = set(('f', 'F', 'false', 'False', 'FALSE', '0', 0, 0.0, False))
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        if (value in self.truthy or
+                value in self.falsy or
+                isinstance(value, bool)):
+            return True
+        return False

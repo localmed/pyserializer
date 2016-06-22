@@ -394,3 +394,54 @@ class TestDictField:
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()
         assert_true(deserializer.is_valid())
+
+
+class TestBooleanField:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            enabled = fields.BooleanField()
+
+            class Meta:
+                fields = (
+                    'enabled',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.enabled)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_boolean_field_valid(self):
+        input_data = {
+            'enabled': 'True'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.enabled, True)
+
+    def test_boolean_field_with_error(self):
+        input_data = {
+            'enabled': 'wrong_field'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_true('enabled' in deserializer.errors.keys())
+        assert_equal(
+            deserializer.errors,
+            OrderedDict(
+                [('enabled', [OrderedDict([
+                    ('type_name', 'BooleanValidator'),
+                    ('type_label', 'boolean'),
+                    ('message', 'Ensure the value wrong_field is a boolean.')
+                ])])]
+            )
+        )
+
+    def test_boolean_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())

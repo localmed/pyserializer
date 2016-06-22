@@ -361,3 +361,18 @@ class DictField(Field):
         if value in constants.EMPTY_VALUES:
             return None
         return value
+
+
+class BooleanField(Field):
+    """
+    A boolen field.
+    """
+
+    type_name = 'BooleanField'
+    type_label = 'booloean'
+    default_validators = [validators.BooleanValidator()]
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+        return bool(value)
