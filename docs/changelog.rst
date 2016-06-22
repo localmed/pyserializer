@@ -2,6 +2,16 @@
 Changelog
 =========
 
+Changes in v0.3.0
+=================
+- Add support for FloatField
+- Add support for DecimalField
+- Add support for DictField
+- Add support for UrlField
+- Add support for BooleanField
+- Add support for RawField
+
+
 Changes in v0.2.1
 =================
 - Fix Field errors are not caught during the validation and stored in error object, but are raised when accessing the object
