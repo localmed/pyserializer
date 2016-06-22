@@ -52,7 +52,6 @@ class Field(object):
         :param validators: List of validators that should be ran when
             deserializing the field. This list will be appended along with
             the default_validators defined on each field.
-
         """
         self.source = source
         self.label = label
@@ -114,6 +113,8 @@ class Field(object):
         """
         Reverts a simple representation back to the field's value.
         """
+        if value in constants.EMPTY_VALUES:
+            return None
         return value
 
     def initialize(self, parent, field_name):
@@ -363,11 +364,6 @@ class DictField(Field):
     type_label = 'dict'
     default_validators = [validators.DictValidator()]
 
-    def to_python(self, value):
-        if value in constants.EMPTY_VALUES:
-            return None
-        return value
-
 
 class BooleanField(Field):
     """
@@ -401,8 +397,3 @@ class UrlField(Field):
     type_name = 'UrlField'
     type_label = 'url'
     default_validators = [validators.UrlValidator()]
-
-    def to_python(self, value):
-        if value in constants.EMPTY_VALUES:
-            return None
-        return value
