@@ -3,6 +3,7 @@ from mock import *  # flake8: noqa
 
 import uuid
 import decimal
+import json
 from datetime import datetime, date
 from collections import OrderedDict
 
@@ -10,7 +11,7 @@ from pyserializer import fields
 from pyserializer.serializers import Serializer
 
 
-class TestDateField:
+class TestDateFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -72,7 +73,37 @@ class TestDateField:
         )
 
 
-class TestDateTimeField:
+class TestDateFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            dob = fields.DateField()
+
+            class Meta:
+                fields = (
+                    'dob',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.dob)
+
+        self.UserSerializer = UserSerializer
+
+    def test_date_field(self):
+        class User(object):
+            def __init__(self):
+                self.dob = date(1985, 10, 10)
+
+        expected_output = {
+            'dob': '1985-10-10'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestDateTimeFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -134,7 +165,37 @@ class TestDateTimeField:
         )
 
 
-class TestUUIDField:
+class TestDateTimeFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            created_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
+
+            class Meta:
+                fields = (
+                    'created_at',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.created_at)
+
+        self.UserSerializer = UserSerializer
+
+    def test_datetime_field(self):
+        class User:
+            def __init__(self):
+                self.created_at = datetime(1985, 10, 10, 10, 30)
+
+        expected_output = {
+            'created_at': '1985-10-10T10:30:00Z'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestUUIDFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -192,7 +253,37 @@ class TestUUIDField:
         )
 
 
-class TestIntegerField:
+class TestUUIDFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            user_id = fields.UUIDField()
+
+            class Meta:
+                fields = (
+                    'user_id',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.user_id)
+
+        self.UserSerializer = UserSerializer
+
+    def test_uuid_field(self):
+        class User:
+            def __init__(self):
+                self.user_id = uuid.UUID('14e2e05e-4eab-478c-8677-907d09aed856')
+
+        expected_output = {
+            'user_id': '14e2e05e-4eab-478c-8677-907d09aed856'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestIntegerFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -243,7 +334,37 @@ class TestIntegerField:
         assert_true(deserializer.is_valid())
 
 
-class TestFloatField:
+class TestIntegerFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            age = fields.IntegerField()
+
+            class Meta:
+                fields = (
+                    'age',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.age)
+
+        self.UserSerializer = UserSerializer
+
+    def test_integer_field(self):
+        class User:
+            def __init__(self):
+                self.age = 20
+
+        expected_output = {
+            'age': 20
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestFloatFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -294,7 +415,37 @@ class TestFloatField:
         assert_true(deserializer.is_valid())
 
 
-class TestDecimalField:
+class TestFloatFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            score = fields.FloatField()
+
+            class Meta:
+                fields = (
+                    'score',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.score)
+
+        self.UserSerializer = UserSerializer
+
+    def test_float_field(self):
+        class User:
+            def __init__(self):
+                self.score = 20.22
+
+        expected_output = {
+            'score': 20.22
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestDecimalFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -345,7 +496,37 @@ class TestDecimalField:
         assert_true(deserializer.is_valid())
 
 
-class TestDictField:
+class TestDecimalFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            amount = fields.DecimalField()
+
+            class Meta:
+                fields = (
+                    'amount',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.amount)
+
+        self.UserSerializer = UserSerializer
+
+    def test_decimal_field(self):
+        class User:
+            def __init__(self):
+                self.amount = 20.22
+
+        expected_output = {
+            'amount': 20.22
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestDictFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -396,7 +577,37 @@ class TestDictField:
         assert_true(deserializer.is_valid())
 
 
-class TestBooleanField:
+class TestDictFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            preference = fields.DictField()
+
+            class Meta:
+                fields = (
+                    'preference',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.preference)
+
+        self.UserSerializer = UserSerializer
+
+    def test_dict_field(self):
+        class User:
+            def __init__(self):
+                self.preference = {'contact': 'email'}
+
+        expected_output = {
+            'preference': {'contact': 'email'}
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestBooleanFieldDeserializer:
 
     def setup(self):
         class UserDeserializer(Serializer):
@@ -445,3 +656,33 @@ class TestBooleanField:
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()
         assert_true(deserializer.is_valid())
+
+
+class TestBooleanFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            enabled = fields.BooleanField()
+
+            class Meta:
+                fields = (
+                    'enabled',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.enabled)
+
+        self.UserSerializer = UserSerializer
+
+    def test_dict_field(self):
+        class User:
+            def __init__(self):
+                self.enabled = True
+
+        expected_output = {
+            'enabled': True
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
