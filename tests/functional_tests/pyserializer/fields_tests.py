@@ -808,3 +808,33 @@ class TestUrlFieldDeserializer:
         deserializer = self.UserDeserializer(data_dict=input_data)
         deserializer.is_valid()
         assert_true(deserializer.is_valid())
+
+
+class TestUrlFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            url = fields.UrlField()
+
+            class Meta:
+                fields = (
+                    'url',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.url)
+
+        self.UserSerializer = UserSerializer
+
+    def test_url_field(self):
+        class User:
+            def __init__(self):
+                self.url = 'https://www.foobar.com/'
+
+        expected_output = {
+            'url': 'https://www.foobar.com/'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
