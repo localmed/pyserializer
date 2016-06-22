@@ -21,6 +21,7 @@ __all__ = [
     'FloatField',
     'DictField',
     'RawField',
+    'UrlField',
 ]
 
 
@@ -386,3 +387,18 @@ class RawField(Field):
 
     type_name = 'RawField'
     type_label = 'raw'
+
+
+class UrlField(Field):
+    """
+    A raw field. Field that does not apply any validation
+    """
+
+    type_name = 'UrlField'
+    type_label = 'url'
+    default_validators = [validators.UrlValidator()]
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+        return value

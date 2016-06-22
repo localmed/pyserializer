@@ -748,3 +748,63 @@ class TestRawFieldSerializer:
         serializer = self.UserSerializer(user)
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
+
+
+class TestUrlFieldDeserializer:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            url = fields.UrlField()
+
+            class Meta:
+                fields = (
+                    'url',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.url)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_url_field_valid(self):
+        input_data = {
+            'url': 'https://www.foobar.com/'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.url, 'https://www.foobar.com/')
+
+    def test_url_field_with_basic_auth_and_port(self):
+        input_data = {
+            'url': 'https://user:password>@foobar.com:8080'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.url, 'https://user:password>@foobar.com:8080')
+
+    def test_url_field_with_invalid_scheme(self):
+        input_data = {
+            'url': 'ps://www.foobar.com/'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_true('url' in deserializer.errors.keys())
+        assert_equal(
+            deserializer.errors,
+            OrderedDict(
+                [('url', [OrderedDict([
+                    ('type_name', 'UrlValidator'),
+                    ('type_label', 'url'),
+                    ('message', 'Ensure the value ps://www.foobar.com/ is a valid URL.')
+                ])])]
+            )
+        )
+
+    def test_url_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())

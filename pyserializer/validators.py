@@ -30,6 +30,7 @@ __all__ = [
     'DateTimeValidator',
     'DateValidator',
     'BooleanValidator',
+    'UrlValidator',
 ]
 
 
@@ -508,3 +509,57 @@ class BooleanValidator(BaseValidator):
                 isinstance(value, bool)):
             return True
         return False
+
+
+class UrlValidator(BaseValidator):
+    """
+    A URL validator.
+    """
+    type_name = 'UrlValidator'
+    type_label = 'url'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is a valid URL.')
+    }
+    default_schemes = set(('http', 'https', 'ftp', 'ftps'))
+    URL_REGEX = re.compile(
+        r'^(?:[a-z0-9\.\-\+]*)://'  # scheme is validated separately
+        r'(?:[^:@]+?:[^:@]*?@|)'  # basic auth
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
+        r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # ...or ipv4
+        r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # ...or ipv6
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    def __init__(self,
+                 allowable_schemes=None,
+                 url_regex=None,
+                 *args,
+                 **kwargs):
+        """
+        :param allowable_schemes: (optional) A set of allowable schemes in url.
+            Uses the `default_schemes` if not specified.
+        :param url_regex: (optional) A url regex for validating the value.
+            Uses the `URL_REGEX` if not specified.
+
+        """
+        self.schemes = allowable_schemes or self.default_schemes
+        self.url_regex = url_regex or self.URL_REGEX
+        super(UrlValidator, self).__init__(*args, **kwargs)
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        # Check first if the scheme is valid
+        if '://' in value:
+            scheme = value.split('://')[0].lower()
+            if scheme not in self.schemes:
+                return False
+        if not self.url_regex.search(value):
+            return False
+        return True
