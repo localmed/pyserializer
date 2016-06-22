@@ -686,3 +686,65 @@ class TestBooleanFieldSerializer:
         serializer = self.UserSerializer(user)
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
+
+
+class TestRawFieldDeserializer:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            notes = fields.RawField()
+
+            class Meta:
+                fields = (
+                    'notes',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.notes)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_raw_field_valid(self):
+        input_data = {
+            'notes': 'some note'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.object.notes, 'some note')
+
+    def test_raw_field_with_empty_value(self):
+        input_data = {}
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+
+
+class TestRawFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            note = fields.RawField()
+
+            class Meta:
+                fields = (
+                    'note',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.note)
+
+        self.UserSerializer = UserSerializer
+
+    def test_note_field(self):
+        class User:
+            def __init__(self):
+                self.note = 'some note'
+
+        expected_output = {
+            'note': 'some note'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)

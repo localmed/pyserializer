@@ -20,6 +20,7 @@ __all__ = [
     'IntegerField',
     'FloatField',
     'DictField',
+    'RawField',
 ]
 
 
@@ -376,3 +377,12 @@ class BooleanField(Field):
         if value in constants.EMPTY_VALUES:
             return None
         return bool(value)
+
+
+class RawField(Field):
+    """
+    A raw field. Field that does not apply any validation
+    """
+
+    type_name = 'RawField'
+    type_label = 'raw'
