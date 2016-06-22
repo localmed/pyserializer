@@ -27,7 +27,8 @@ __all__ = [
     'DecimalValidator',
     'DictValidator',
     'UUIDValidator',
-    'DateTimeOrDateValidator',
+    'DateTimeValidator',
+    'DateValidator',
 ]
 
 
@@ -428,7 +429,7 @@ class UUIDValidator(BaseValidator):
             return False
 
 
-class DateTimeOrDateValidator(BaseValidator):
+class DateTimeValidator(BaseValidator):
     """
     A DateTime validator.
     """
@@ -448,7 +449,7 @@ class DateTimeOrDateValidator(BaseValidator):
             Defaults to ISO_8601.
         """
         self.format = format or self.format
-        super(DateTimeOrDateValidator, self).__init__(*args, **kwargs)
+        super(DateTimeValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
         # Only run the validator
@@ -468,3 +469,15 @@ class DateTimeOrDateValidator(BaseValidator):
             return True
         except (ValueError, TypeError):
             return False
+
+
+class DateValidator(DateTimeValidator):
+    """
+    A Date validator.
+    """
+    type_name = 'DateValidator'
+    type_label = 'date'
+    default_error_messages = {
+        'invalid': ('Ensure the Date value {value} is of format {format}.')
+    }
+    format = constants.DATETIME_FORMAT

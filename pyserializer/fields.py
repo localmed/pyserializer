@@ -157,7 +157,7 @@ class DateField(Field):
 
     type_name = 'DateField'
     type_label = 'date'
-    format = constants.DATE_FORMAT
+    format = '%Y-%m-%d'
 
     def __init__(self,
                  format=None,
@@ -171,7 +171,7 @@ class DateField(Field):
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        default_validators = [validators.DateValidator(self.format)]
         super(DateField, self).__init__(
             validators=default_validators,
             *args,
@@ -223,7 +223,7 @@ class DateTimeField(Field):
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        default_validators = [validators.DateTimeValidator(self.format)]
         super(DateTimeField, self).__init__(
             validators=default_validators,
             *args,
