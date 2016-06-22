@@ -9,6 +9,7 @@ help:
 	@echo "  publish_test     Publishes the lib to pypi test server. Make sure ~/.pypirc is set up correctly. See .pypirc.example for example."
 	@echo "  publish          Publishes the lib to pypi. Make sure ~/.pypirc is set up correctly. See .pypirc.example for example."
 	@echo "  clean            Cleans the temp files and folders."
+	@echo "  watch_doc        Run build the docs when a file changes."
 
 .PHONY: unit_test
 unit_test:
@@ -37,3 +38,7 @@ publish:
 .PHONY: clean
 clean:
 	@rm -rf dist && rm -rf pyserializer.egg-info
+
+.PHONY: watch_doc
+watch_doc:
+	@bin/watch_doc

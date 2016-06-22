@@ -49,6 +49,10 @@ class Field(object):
         :param help_text: (optional) The readable help text for the field.
         :param required: (bool) If the field is required or not.
             Defaults to True.
+        :param validators: List of validators that should be ran when
+            deserializing the field. This list will be appended along with
+            the default_validators defined on each field.
+
         """
         self.source = source
         self.label = label
@@ -166,7 +170,7 @@ class DateField(Field):
                  *args,
                  **kwargs):
         """
-        :param format: The format of the date. Defaults to ISO_8601.
+        :param format: The format of the date. Defaults to %Y-%m-%d.
         :param args: Arguments passed directly into the parent
             :class:`~pyserializer.Field`.
         :param kwargs: Keyword arguments passed directly into the parent
