@@ -43,7 +43,7 @@ Get the serialized data::
 
     users = [User(email='foo_1@bar.com', username='foo_1'), User(email='foo_2@bar.com', username='foo_2')]
 
-    serializer = UserSerializer(users, many )
+    serializer = UserSerializer(users, many=True)
     serializer.data
     # [OrderedDict([('email', 'foo_1@bar.com'), ('username', 'foo_1')]), OrderedDict([('email', 'foo_2@bar.com'), ('username', 'foo_2')])]
 
