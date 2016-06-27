@@ -22,7 +22,7 @@ Let's start by creating a python object which we can use to demonstrate our seri
             self.email = email
             self.username = username
 
-Now lets define a serializer which we can use to serialize data that currospond to User object::
+Now let's define a serializer which we can use to serialize data that currosponds to User object::
 
     from pyserializer.serializers import Serializer
     from pyserializer import fields
