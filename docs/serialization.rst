@@ -9,8 +9,56 @@ If you haven't installed pyserializer, simply use pip to install it like so::
 
     $ pip install pyserializer
 
+Example 1: Serialization with many objects
+==========================================
+
 Defining our serailizer
-=======================
+-----------------------
+
+Let's start by creating a python object which we can use to demonstrate our serializer. Lets assume we have a user object::
+
+    class User(object):
+        def __init__(self, email, username):
+            self.email = email
+            self.username = username
+
+Now lets define a serializer which we can use to serialize data that currospond to User object::
+
+    from pyserializer.serializers import Serializer
+    from pyserializer import fields
+
+    class UserSerializer(Serializer):
+        email = fields.CharField()
+        username = fields.CharField()
+
+        class Meta:
+            fields = (
+                'email',
+                'username'
+            )
+
+Serailize the object
+---------------------
+Get the serialized data::
+
+    users = [User(email='foo_1@bar.com', username='foo_1'), User(email='foo_2@bar.com', username='foo_2')]
+
+    serializer = UserSerializer(users, many )
+    serializer.data
+    # [OrderedDict([('email', 'foo_1@bar.com'), ('username', 'foo_1')]), OrderedDict([('email', 'foo_2@bar.com'), ('username', 'foo_2')])]
+
+Get in json serialized format::
+
+    import json
+    json.dumps(serializer.data)
+    # '[{"email": "foo_1@bar.com", "username": "foo_1"}, {"email": "foo_2@bar.com", "username": "foo_2"}]'
+
+
+Example 2: Nested Serialization
+===============================
+
+Defining our serailizer
+-----------------------
 
 Let's start by creating a python object which we can use to demonstrate our serializer. Lets assume we have a comment object and the comment object has a user attached to it::
 
@@ -58,8 +106,8 @@ Now lets define a serializer which we can use to serialize data that currospond 
             )
 
 
-Serailizer the object
-=====================
+Serailize the object
+---------------------
 Get the serialized data::
 
     user = User()
