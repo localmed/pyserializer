@@ -36,6 +36,9 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
 :doc:`validation`
   A quick validation example. Shows examples on how to define validators on your field and check errors encountered diring validation process.
 
+:doc:`fields`
+  A list of currently supported fields.
+
 :doc:`custom`
   A quick example on how you can create custom fields and validators.
 
@@ -116,6 +119,7 @@ The project is licensed under the MIT license.
     serialization
     deserialization
     validation
+    fields
     apireference
     custom
     changelog

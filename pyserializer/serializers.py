@@ -176,7 +176,7 @@ class BaseSerializer(object):
                 'Cannot restore object unless `data_dict` value is set'
             )
         # Create an instance of the Serializer class
-        instance = copy.deepcopy(self)
+        instance = copy.copy(self)
         restored_fields = self.restore_fields(self.data_dict)
         for field_name, field in six.iteritems(self.fields):
             self.set_field_value_on_instance(
@@ -261,7 +261,7 @@ class BaseSerializer(object):
         output = OrderedDict()
 
         # Get the explicitly declared fields
-        base_fields = copy.deepcopy(self.base_fields)
+        base_fields = copy.copy(self.base_fields)
         for key, field in six.iteritems(base_fields):
             output[key] = field
 

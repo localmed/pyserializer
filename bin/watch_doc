@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    echo "Run build the docs when a file changes"
+    exit
+fi
+
+if ! pip list | grep sphinx-autobuild; then
+    echo "Installing sphinx-autobuild.."
+    pip install sphinx_autobuild
+fi
+
+DOCS_PATH="docs"
+BUILD_PATH="docs/_build"
+
+sphinx-autobuild $DOCS_PATH $BUILD_PATH --watch pyserializer

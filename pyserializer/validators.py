@@ -1,6 +1,9 @@
 import six
 import re
 import uuid
+import copy
+import decimal
+import collections
 from encodings import idna
 from decimal import Decimal
 from collections import OrderedDict
@@ -18,9 +21,16 @@ __all__ = [
     'MaxLengthValidator',
     'MinLengthValidator',
     'EmailValidator',
+    'NumberValidator',
     'IntegerValidator',
+    'FloatValidator',
+    'DecimalValidator',
+    'DictValidator',
     'UUIDValidator',
-    'DateTimeOrDateValidator',
+    'DateTimeValidator',
+    'DateValidator',
+    'BooleanValidator',
+    'UrlValidator',
 ]
 
 
@@ -35,28 +45,42 @@ class BaseValidator(object):
     }
 
     def __init__(self, *args, **kwargs):
-        self.message = kwargs.pop(
-            'message',
-            self.default_error_messages['invalid']
-        )
+        error_messages = copy.deepcopy(self.default_error_messages)
+        error_messages.update(kwargs.pop('error_messages', {}))
+        self.error_messages = error_messages
         self.error_dict = OrderedDict([
             ('type_name', kwargs.pop('type_name', self.type_name)),
             ('type_label', kwargs.pop('type_label', self.type_label)),
-            ('message', self.message)
+            ('message', self.error_messages['invalid'])
         ])
 
     def __call__(self, value):
         # Only run the validator
         # if the value is not empty ie: (None, '', [], (), {})
         if value not in constants.EMPTY_VALUES and not self.is_valid(value):
-            raise ValidationError(
-                self.default_error_messages['invalid']
-            )
+            self.fail('invalid')
 
     def is_valid(self, value):
         raise NotImplementedError(
             '`is_valid` should be implemented by the child class.'
         )
+
+    def fail(self, key, **kwargs):
+        """
+        A helper method to raise `ValidationError`
+        """
+        try:
+            msg = self.error_messages[key]
+            if kwargs:
+                msg = msg.format(**kwargs)
+        except KeyError:
+            class_name = self.__class__.__name__
+            msg = constants.MISSING_ERROR_MESSAGE.format(
+                class_name=class_name,
+                key=key
+            )
+            raise AssertionError(msg)
+        raise ValidationError(msg)
 
 
 class RequiredValidator(BaseValidator):
@@ -71,9 +95,7 @@ class RequiredValidator(BaseValidator):
 
     def __call__(self, value):
         if not self.is_valid(value):
-            raise ValidationError(
-                self.default_error_messages['invalid']
-            )
+            self.fail('invalid')
 
     def is_valid(self, value):
         if value in constants.EMPTY_VALUES:
@@ -88,7 +110,7 @@ class MaxValueValidator(BaseValidator):
     type_name = 'MaxValueValidator'
     type_label = 'max_value'
     default_error_messages = {
-        'invalid': 'Ensure this value is less than or equal to %s.'
+        'invalid': 'Ensure this value is less than or equal to {max_value}.'
     }
 
     def __init__(self,
@@ -107,9 +129,7 @@ class MaxValueValidator(BaseValidator):
         # Only run the validator
         # if the value is not empty ie: (None, '', [], (), {})
         if value not in constants.EMPTY_VALUES and not self.is_valid(value):
-            raise ValidationError(
-                self.default_error_messages['invalid'] % self.max_value
-            )
+            self.fail('invalid', max_value=self.max_value)
 
     def is_valid(self, value):
         if isinstance(value, six.string_types):
@@ -124,7 +144,7 @@ class MinValueValidator(BaseValidator):
     type_name = 'MinValueValidator'
     type_label = 'max_value'
     default_error_messages = {
-        'invalid': 'Ensure this value is greater than or equal to %s.'
+        'invalid': 'Ensure this value is greater than or equal to {min_value}.'
     }
 
     def __init__(self,
@@ -143,9 +163,7 @@ class MinValueValidator(BaseValidator):
         # Only run the validator
         # if the value is not empty ie: (None, '', [], (), {})
         if value not in constants.EMPTY_VALUES and not self.is_valid(value):
-            raise ValidationError(
-                self.default_error_messages['invalid'] % self.min_value
-            )
+            self.fail('invalid', min_value=self.min_value)
 
     def is_valid(self, value):
         if isinstance(value, six.string_types):
@@ -160,8 +178,8 @@ class MaxLengthValidator(BaseValidator):
     type_name = 'MaxLengthValidator'
     type_label = 'max_length'
     default_error_messages = {
-        'invalid': ('Ensure the value has atmost %s characters'
-                    '(it has %s characters).')
+        'invalid': ('Ensure the value has atmost {max_lenght} characters'
+                    '(it has {lenght} characters).')
     }
 
     def __init__(self,
@@ -183,9 +201,11 @@ class MaxLengthValidator(BaseValidator):
             value = force_str(value)
             value_length = len(value)
             if not self.is_valid(value_length):
-                message = self.default_error_messages['invalid'] \
-                    % (self.max_length, value_length)
-                raise ValidationError(message)
+                self.fail(
+                    'invalid',
+                    max_lenght=self.max_length,
+                    lenght=value_length
+                )
 
     def is_valid(self, value_length):
         return value_length <= self.max_length
@@ -198,8 +218,8 @@ class MinLengthValidator(BaseValidator):
     type_name = 'MinLengthValidator'
     type_label = 'min_length'
     default_error_messages = {
-        'invalid': ('Ensure the value has atlest %s characters'
-                    '(it has %s characters).')
+        'invalid': ('Ensure the value has atlest {min_length} characters'
+                    '(it has {lenght} characters).')
     }
 
     def __init__(self,
@@ -221,9 +241,11 @@ class MinLengthValidator(BaseValidator):
             value = force_str(value)
             value_length = len(value)
             if not self.is_valid(value_length):
-                message = self.default_error_messages['invalid'] \
-                    % (self.min_length, value_length)
-                raise ValidationError(message)
+                self.fail(
+                    'invalid',
+                    min_length=self.min_length,
+                    lenght=value_length
+                )
 
     def is_valid(self, value_length):
         return value_length >= self.min_length
@@ -236,7 +258,7 @@ class EmailValidator(BaseValidator):
     type_name = 'EmailValidator'
     type_label = 'email'
     default_error_messages = {
-        'invalid': '%s is an invalid email address.'
+        'invalid': '{value} is an invalid email address.'
     }
     user_regex = re.compile(r"^[\w!#$%&'*+\-/=?^`{|}~.]+$")
     domain_regex = re.compile(r'''
@@ -263,9 +285,7 @@ class EmailValidator(BaseValidator):
         if value not in constants.EMPTY_VALUES:
             value = force_str(value)
             if not self.is_valid(value):
-                message = self.default_error_messages['invalid'] \
-                    % (value)
-                raise ValidationError(message)
+                self.fail('invalid', value=value)
 
     def is_valid(self, value):
         if not value or '@' not in value:
@@ -293,29 +313,96 @@ class EmailValidator(BaseValidator):
         return True
 
 
-class IntegerValidator(BaseValidator):
+class NumberValidator(BaseValidator):
     """
-    A integer validator.
+    A number validator. The default `num_type` is `float`
     """
-    type_name = 'IntegerValidator'
-    type_label = 'integer'
+    num_type = float
+    type_name = 'NumberValidator'
+    type_label = 'number'
     default_error_messages = {
-        'invalid': ('Ensure the value %s is of type integer.')
+        'invalid': ('Not a valid number.')
     }
 
     def __call__(self, value):
         # Only run the validator
         # if the value is not empty ie: (None, '', [], (), {})
         if value not in constants.EMPTY_VALUES and not self.is_valid(value):
-            message = self.default_error_messages['invalid'] % (value)
-            raise ValidationError(message)
+            self.fail('invalid', value=value)
 
     def is_valid(self, value):
         try:
-            int(str(value))
+            self.num_type(str(value))
             return True
         except (ValueError, TypeError):
             return False
+
+
+class IntegerValidator(NumberValidator):
+    """
+    A integer validator.
+    """
+    num_type = int
+    type_name = 'IntegerValidator'
+    type_label = 'integer'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type integer.')
+    }
+
+
+class FloatValidator(NumberValidator):
+    """
+    A float validator.
+    """
+    num_type = float
+    type_name = 'FloatValidator'
+    type_label = 'float'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type float.')
+    }
+
+
+class DecimalValidator(NumberValidator):
+    """
+    A decimal validator.
+    """
+    num_type = decimal.Decimal
+    type_name = 'DecimalValidator'
+    type_label = 'decimal'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type decimal.')
+    }
+
+    def is_valid(self, value):
+        """
+        override `is_valid' method of parent class `Number`
+        """
+        try:
+            return super(DecimalValidator, self).is_valid(value)
+        except decimal.InvalidOperation:
+            return False
+
+
+class DictValidator(BaseValidator):
+    """
+    A dict validator.
+    """
+    type_name = 'DictValidator'
+    type_label = 'dict'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is of type dict.')
+    }
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        if isinstance(value, collections.Mapping):
+            return True
+        return False
 
 
 class UUIDValidator(BaseValidator):
@@ -325,13 +412,14 @@ class UUIDValidator(BaseValidator):
     type_name = 'UUIDValidator'
     type_label = 'uuid'
     default_error_messages = {
-        'invalid': ('Ensure the value %s is of type uuid.')
+        'invalid': ('Ensure the value {value} is of type uuid.')
     }
 
     def __call__(self, value):
-        if not self.is_valid(value):
-            message = self.default_error_messages['invalid'] % (value)
-            raise ValidationError(message)
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
 
     def is_valid(self, value):
         if isinstance(value, uuid.UUID):
@@ -343,14 +431,14 @@ class UUIDValidator(BaseValidator):
             return False
 
 
-class DateTimeOrDateValidator(BaseValidator):
+class DateTimeValidator(BaseValidator):
     """
     A DateTime validator.
     """
     type_name = 'DateTimeValidator'
     type_label = 'date_time'
     default_error_messages = {
-        'invalid': ('Ensure the DateTime value %s is of format %s.')
+        'invalid': ('Ensure the DateTime value {value} is of format {format}.')
     }
     format = constants.DATETIME_FORMAT
 
@@ -363,13 +451,17 @@ class DateTimeOrDateValidator(BaseValidator):
             Defaults to ISO_8601.
         """
         self.format = format or self.format
-        super(DateTimeOrDateValidator, self).__init__(*args, **kwargs)
+        super(DateTimeValidator, self).__init__(*args, **kwargs)
 
     def __call__(self, value):
-        if not self.is_valid(value):
-            message = self.default_error_messages['invalid'] \
-                % (value, self.format)
-            raise ValidationError(message)
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail(
+                'invalid',
+                value=value,
+                format=self.format
+            )
 
     def is_valid(self, value):
         if isinstance(value, (datetime, date)):
@@ -379,3 +471,95 @@ class DateTimeOrDateValidator(BaseValidator):
             return True
         except (ValueError, TypeError):
             return False
+
+
+class DateValidator(DateTimeValidator):
+    """
+    A Date validator.
+    """
+    type_name = 'DateValidator'
+    type_label = 'date'
+    default_error_messages = {
+        'invalid': ('Ensure the Date value {value} is of format {format}.')
+    }
+    format = constants.DATETIME_FORMAT
+
+
+class BooleanValidator(BaseValidator):
+    """
+    A Boolean validator.
+    """
+    type_name = 'BooleanValidator'
+    type_label = 'boolean'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is a boolean.')
+    }
+    truthy = set(('t', 'T', 'true', 'True', 'TRUE', '1', 1, True))
+    falsy = set(('f', 'F', 'false', 'False', 'FALSE', '0', 0, 0.0, False))
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        if (value in self.truthy or
+                value in self.falsy or
+                isinstance(value, bool)):
+            return True
+        return False
+
+
+class UrlValidator(BaseValidator):
+    """
+    A URL validator.
+    """
+    type_name = 'UrlValidator'
+    type_label = 'url'
+    default_error_messages = {
+        'invalid': ('Ensure the value {value} is a valid URL.')
+    }
+    default_schemes = set(('http', 'https', 'ftp', 'ftps'))
+    URL_REGEX = re.compile(
+        r'^(?:[a-z0-9\.\-\+]*)://'  # scheme is validated separately
+        r'(?:[^:@]+?:[^:@]*?@|)'  # basic auth
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+'
+        r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # ...or ipv4
+        r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # ...or ipv6
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    def __init__(self,
+                 allowable_schemes=None,
+                 url_regex=None,
+                 *args,
+                 **kwargs):
+        """
+        :param allowable_schemes: (optional) A set of allowable schemes in url.
+            Uses the `default_schemes` if not specified.
+        :param url_regex: (optional) A url regex for validating the value.
+            Uses the `URL_REGEX` if not specified.
+
+        """
+        self.schemes = allowable_schemes or self.default_schemes
+        self.url_regex = url_regex or self.URL_REGEX
+        super(UrlValidator, self).__init__(*args, **kwargs)
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value)
+
+    def is_valid(self, value):
+        # Check first if the scheme is valid
+        if '://' in value:
+            scheme = value.split('://')[0].lower()
+            if scheme not in self.schemes:
+                return False
+        if not self.url_regex.search(value):
+            return False
+        return True

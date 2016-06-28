@@ -16,8 +16,12 @@ Fields
 .. autoclass:: pyserializer.fields.DateField
 .. autoclass:: pyserializer.fields.DateTimeField
 .. autoclass:: pyserializer.fields.UUIDField
+.. autoclass:: pyserializer.fields.NumberField
 .. autoclass:: pyserializer.fields.IntegerField
-
+.. autoclass:: pyserializer.fields.FloatField
+.. autoclass:: pyserializer.fields.DictField
+.. autoclass:: pyserializer.fields.RawField
+.. autoclass:: pyserializer.fields.UrlField
 
 Validators
 ==========
@@ -29,3 +33,13 @@ Validators
 .. autoclass:: pyserializer.validators.MaxLengthValidator
 .. autoclass:: pyserializer.validators.MinLengthValidator
 .. autoclass:: pyserializer.validators.EmailValidator
+.. autoclass:: pyserializer.validators.NumberValidator
+.. autoclass:: pyserializer.validators.IntegerValidator
+.. autoclass:: pyserializer.validators.FloatValidator
+.. autoclass:: pyserializer.validators.DecimalValidator
+.. autoclass:: pyserializer.validators.DictValidator
+.. autoclass:: pyserializer.validators.UUIDValidator
+.. autoclass:: pyserializer.validators.DateTimeValidator
+.. autoclass:: pyserializer.validators.DateValidator
+.. autoclass:: pyserializer.validators.BooleanValidator
+.. autoclass:: pyserializer.validators.UrlValidator

@@ -2,6 +2,7 @@ import six
 from datetime import datetime, date
 import warnings
 import uuid
+import decimal
 
 from pyserializer.utils import is_simple_callable, is_iterable
 from pyserializer import constants
@@ -15,7 +16,12 @@ __all__ = [
     'DateField',
     'DateTimeField',
     'UUIDField',
+    'NumberField',
     'IntegerField',
+    'FloatField',
+    'DictField',
+    'RawField',
+    'UrlField',
 ]
 
 
@@ -43,6 +49,9 @@ class Field(object):
         :param help_text: (optional) The readable help text for the field.
         :param required: (bool) If the field is required or not.
             Defaults to True.
+        :param validators: List of validators that should be ran when
+            deserializing the field. This list will be appended along with
+            the default_validators defined on each field.
         """
         self.source = source
         self.label = label
@@ -104,6 +113,8 @@ class Field(object):
         """
         Reverts a simple representation back to the field's value.
         """
+        if value in constants.EMPTY_VALUES:
+            return None
         return value
 
     def initialize(self, parent, field_name):
@@ -153,25 +164,21 @@ class DateField(Field):
 
     type_name = 'DateField'
     type_label = 'date'
-    format = constants.DATE_FORMAT
-    default_error_messages = {
-        'invalid': ('The value received for DateField (%s) '
-                    'is not a valid Date format (%s).')
-    }
+    format = '%Y-%m-%d'
 
     def __init__(self,
                  format=None,
                  *args,
                  **kwargs):
         """
-        :param format: The format of the date. Defaults to ISO_8601.
+        :param format: The format of the date. Defaults to %Y-%m-%d.
         :param args: Arguments passed directly into the parent
             :class:`~pyserializer.Field`.
         :param kwargs: Keyword arguments passed directly into the parent
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        default_validators = [validators.DateValidator(self.format)]
         super(DateField, self).__init__(
             validators=default_validators,
             *args,
@@ -210,10 +217,6 @@ class DateTimeField(Field):
     type_name = 'DateTimeField'
     type_label = 'datetime'
     format = constants.DATETIME_FORMAT
-    default_error_messages = {
-        'invalid': ('The value received for DateTimeField (%s) '
-                    ' is not a valid DateTime format (%s).')
-    }
 
     def __init__(self,
                  format=None,
@@ -227,7 +230,7 @@ class DateTimeField(Field):
             :class:`~pyserializer.Field`.
         """
         self.format = format or self.format
-        default_validators = [validators.DateTimeOrDateValidator(self.format)]
+        default_validators = [validators.DateTimeValidator(self.format)]
         super(DateTimeField, self).__init__(
             validators=default_validators,
             *args,
@@ -266,10 +269,6 @@ class UUIDField(Field):
 
     type_name = 'UUIDField'
     type_label = 'string'
-    default_error_messages = {
-        'invalid': ('The value received for UUIDField (%s)'
-                    ' is not a valid UUID format.')
-    }
     default_validators = [validators.UUIDValidator()]
 
     def __init__(self,
@@ -296,18 +295,15 @@ class UUIDField(Field):
         return uuid.UUID(str(value))
 
 
-class IntegerField(Field):
+class NumberField(Field):
     """
-    A integer field.
+    A number field. The default `num_type` is `float`.
     """
 
-    type_name = 'IntegerField'
-    type_label = 'integer'
-    default_error_messages = {
-        'invalid': ('The value received for IntegerField (%s)'
-                    ' is not a valid Integer format.')
-    }
-    default_validators = [validators.IntegerValidator()]
+    num_type = float
+    type_name = 'NumberField'
+    type_label = 'number'
+    default_validators = [validators.NumberValidator()]
 
     def __init__(self,
                  *args,
@@ -318,9 +314,86 @@ class IntegerField(Field):
         :param kwargs: Keyword arguments passed directly into the parent
             :class:`~pyserializer.Field`.
         """
-        super(IntegerField, self).__init__(*args, **kwargs)
+        super(NumberField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
         if value in constants.EMPTY_VALUES:
             return None
-        return int(value)
+        return self.num_type(value)
+
+
+class IntegerField(NumberField):
+    """
+    A integer field.
+    """
+
+    num_type = int
+    type_name = 'IntegerField'
+    type_label = 'integer'
+    default_validators = [validators.IntegerValidator()]
+
+
+class FloatField(NumberField):
+    """
+    A float field.
+    """
+
+    num_type = float
+    type_name = 'FloatField'
+    type_label = 'float'
+    default_validators = [validators.FloatValidator()]
+
+
+class DecimalField(NumberField):
+    """
+    A decimal field.
+    """
+
+    num_type = decimal.Decimal
+    type_name = 'DecimalField'
+    type_label = 'decimal'
+    default_validators = [validators.DecimalValidator()]
+
+
+class DictField(Field):
+    """
+    A dict field.
+    """
+
+    type_name = 'DictField'
+    type_label = 'dict'
+    default_validators = [validators.DictValidator()]
+
+
+class BooleanField(Field):
+    """
+    A boolen field.
+    """
+
+    type_name = 'BooleanField'
+    type_label = 'booloean'
+    default_validators = [validators.BooleanValidator()]
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+        return bool(value)
+
+
+class RawField(Field):
+    """
+    A raw field. Field that does not apply any validation
+    """
+
+    type_name = 'RawField'
+    type_label = 'raw'
+
+
+class UrlField(Field):
+    """
+    A raw field. Field that does not apply any validation
+    """
+
+    type_name = 'UrlField'
+    type_label = 'url'
+    default_validators = [validators.UrlValidator()]
