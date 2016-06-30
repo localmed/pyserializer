@@ -6,6 +6,7 @@ __all__ = [
     'is_simple_callable',
     'is_iterable',
     'force_str',
+    'get_object_by_source',
 ]
 
 
@@ -38,3 +39,19 @@ def force_str(value, encoding='utf-8'):
         if isinstance(value, bytes):
             return str(value, encoding)
     return value
+
+
+def get_object_by_source(obj, source):
+    """
+    Tries to get the object by source.
+    Example:
+        >>> obj = get_object_by_source(
+            object, source='user.username')
+    """
+    if '.' in source:
+        source_list = source.split('.')
+        for source in source_list:
+            obj = getattr(obj, source)
+    else:
+        obj = getattr(obj, source)
+    return obj

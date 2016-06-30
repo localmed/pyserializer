@@ -3,6 +3,7 @@ import copy
 from collections import OrderedDict
 
 from pyserializer.exceptions import ValidationError
+from pyserializer.utils import get_object_by_source
 
 
 __all__ = [
@@ -295,7 +296,7 @@ class BaseSerializer(object):
             key = field_name
             if isinstance(field, Serializer):
                 if field.source:
-                    serializable_obj = getattr(obj, field.source)
+                    serializable_obj = get_object_by_source(obj, field.source)
                 else:
                     serializable_obj = getattr(obj, key)
                 field.instance = serializable_obj

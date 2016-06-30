@@ -132,3 +132,57 @@ class TestSerializationWithManyTrue:
         }]
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
+
+
+class TestSerializationWithNestedSource:
+
+    def setup(self):
+        class LocationSerializer(Serializer):
+            street = fields.CharField()
+            state = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'street',
+                    'state'
+                )
+
+        class CommentSerializer(Serializer):
+            content = fields.CharField()
+            location = LocationSerializer(source='user.location')
+
+            class Meta:
+                fields = (
+                    'content',
+                    'location',
+                )
+
+        class Location:
+            def __init__(self):
+                self.street = 'Street 123'
+                self.state = 'LA'
+
+        class User:
+            def __init__(self):
+                self.location = Location()
+
+        class Comment:
+            def __init__(self):
+                self.user = User()
+                self.content = 'Some text content'
+
+        self.CommentSerializer = CommentSerializer
+        self.user = User()
+        self.comment = Comment()
+
+    def test_serialization_with_nested_source(self):
+        serializer = self.CommentSerializer(self.comment)
+        expected_output = {
+            'content': 'Some text content',
+            'location': {
+                'state': 'LA',
+                'street': 'Street 123'
+            }
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
