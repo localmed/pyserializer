@@ -1,5 +1,6 @@
 import inspect
 import six
+import collections
 
 
 __all__ = [
@@ -44,14 +45,25 @@ def force_str(value, encoding='utf-8'):
 def get_object_by_source(obj, source):
     """
     Tries to get the object by source.
+    Similar to Python's `getattr(obj, source)`, but takes a dot separaed
+    string for source to get source from nested obj, instead of a single
+    source field. Also, supports getting source form obj where obj is a
+    dict type.
+
     Example:
         >>> obj = get_object_by_source(
             object, source='user.username')
     """
-    if '.' in source:
-        source_list = source.split('.')
-        for source in source_list:
-            obj = getattr(obj, source)
+    if isinstance(obj, collections.Mapping):
+        if '.' in source:
+            for source in source.split('.'):
+                obj = obj.get(source)
+        else:
+            obj = obj.get(source)
     else:
-        obj = getattr(obj, source)
+        if '.' in source:
+            for source in source.split('.'):
+                obj = getattr(obj, source)
+        else:
+            obj = getattr(obj, source)
     return obj

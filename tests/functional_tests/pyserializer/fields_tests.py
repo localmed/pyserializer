@@ -90,7 +90,7 @@ class TestDateFieldSerializer:
         self.UserSerializer = UserSerializer
 
     def test_date_field(self):
-        class User(object):
+        class User:
             def __init__(self):
                 self.dob = date(1985, 10, 10)
 
@@ -833,6 +833,51 @@ class TestUrlFieldSerializer:
 
         expected_output = {
             'url': 'https://www.foobar.com/'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestMethodFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            first_name = fields.CharField()
+            last_name = fields.CharField()
+            full_name = fields.MethodField(
+                method_name='get_full_name'
+            )
+
+            def get_full_name(self, obj):
+                return '{0} {1}'.format(
+                    obj.first_name,
+                    obj.last_name
+                )
+
+            class Meta:
+                fields = (
+                    'first_name',
+                    'last_name',
+                    'full_name',
+                )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.full_name)
+
+        self.UserSerializer = UserSerializer
+
+    def test_method_field(self):
+        class User:
+            def __init__(self):
+                self.first_name = 'John'
+                self.last_name = 'Smith'
+
+        expected_output = {
+            'first_name': 'John',
+            'last_name': 'Smith',
+            'full_name': 'John Smith'
         }
         user = User()
         serializer = self.UserSerializer(user)
