@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Changes in v0.4.0
+=================
+- Add support for ``MethodField``
+
 Changes in v0.3.1
 =================
 - Fixes bug with defining source with dot syntax
