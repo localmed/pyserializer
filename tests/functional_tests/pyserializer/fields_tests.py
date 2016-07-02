@@ -849,6 +849,9 @@ class TestMethodFieldSerializer:
             full_name = fields.MethodField(
                 method_name='get_full_name'
             )
+            name_dict = fields.MethodField(
+                method_name='get_name_dict'
+            )
 
             def get_full_name(self, obj):
                 return '{0} {1}'.format(
@@ -856,11 +859,18 @@ class TestMethodFieldSerializer:
                     obj.last_name
                 )
 
+            def get_name_dict(self, obj):
+                return dict(
+                    first_name=obj.first_name,
+                    last_name=obj.last_name,
+                )
+
             class Meta:
                 fields = (
                     'first_name',
                     'last_name',
                     'full_name',
+                    'name_dict',
                 )
 
             def __repr__(self):
@@ -877,7 +887,11 @@ class TestMethodFieldSerializer:
         expected_output = {
             'first_name': 'John',
             'last_name': 'Smith',
-            'full_name': 'John Smith'
+            'full_name': 'John Smith',
+            'name_dict': {
+                'first_name': 'John',
+                'last_name': 'Smith'
+            }
         }
         user = User()
         serializer = self.UserSerializer(user)

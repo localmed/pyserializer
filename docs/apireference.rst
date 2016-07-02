@@ -22,6 +22,7 @@ Fields
 .. autoclass:: pyserializer.fields.DictField
 .. autoclass:: pyserializer.fields.RawField
 .. autoclass:: pyserializer.fields.UrlField
+.. autoclass:: pyserializer.fields.MethodField
 
 Validators
 ==========
@@ -43,3 +44,4 @@ Validators
 .. autoclass:: pyserializer.validators.DateValidator
 .. autoclass:: pyserializer.validators.BooleanValidator
 .. autoclass:: pyserializer.validators.UrlValidator
+.. autoclass:: pyserializer.validators.MethodValidator

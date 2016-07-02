@@ -14,5 +14,6 @@ Currently supported fields
 - DictField
 - RawField
 - UrlField
+- MethodField
 
 See :doc:`apireference` for complete documentation on the fields.

@@ -94,7 +94,7 @@ Now lets define a serializer which we can use to serialize data that currospond 
     class CommentSerializer(Serializer):
         user = UserSerializer(source='user') # Eg: Nested serialization
         content = fields.CharField()
-        createdDate = fields.DateField(source='created_date', format='%d/%m/%y') # Eg: Specify you own datetime format. Defaults to ISO_8601
+        createdDate = fields.DateField(source='created_date', format='%d/%m/%y') # Eg: Specify you own datetime format. Defaults to ISO_8601. Also, demonstrates specifying the source on the field.
         created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ') # Eg: Specify you own datetime format. Defaults to ISO_8601
 
         class Meta:
@@ -121,3 +121,57 @@ Get in json serialized format::
     import json
     json.dumps(serializer.data)
     # '{"user": {"email": "foo@example.com", "username": "foobar"}, "content": "Some text content", "createdDate": "01/01/15", "created_time": "2015-01-01T10:30:00Z"}'
+
+
+Example 3: Serialization with custom method field
+=================================================
+
+Defining our serailizer
+-----------------------
+
+Let's start by creating a python object which we can use to demonstrate our serializer. Lets assume we have a user object::
+
+    class User:
+        def __init__(self, first_name, last_name):
+            self.first_name = first_name
+            self.last_name = last_name
+
+Now let's define a serializer which we can use to serialize data that corresponds to User object::
+
+    from pyserializer.serializers import Serializer
+    from pyserializer import fields
+
+    class UserSerializer(Serializer):
+        first_name = fields.CharField()
+        last_name = fields.CharField()
+        full_name = fields.MethodField(
+            method_name='get_full_name'
+        )
+
+        def get_full_name(self, obj):
+            return '{0} {1}'.format(
+                obj.first_name,
+                obj.last_name
+            )
+
+        class Meta:
+            fields = (
+                'first_name',
+                'last_name',
+                'full_name',
+            )
+
+Serailize the object
+---------------------
+Get the serialized data::
+
+    user = User(first_name='John', last_name='Smith')
+    serializer = UserSerializer(user)
+    serializer.data
+    # OrderedDict([('first_name', 'John'), ('last_name', 'Smith'), ('full_name', 'John Smith')])
+
+Get in json serialized format::
+
+    import json
+    json.dumps(serializer.data)
+    # '{"first_name": "John", "last_name": "Smith", "full_name": "John Smith"}'
