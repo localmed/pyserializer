@@ -64,4 +64,4 @@ Lets use the deserializer class we defined above to deserialize a Python dict::
     datetime.datetime(2012, 1, 1, 16, 0)
 
 
-.. note:: If your fields in the deserializer class has validators defined, the   validators will run before deserializing the objects. If any error is encountered during the validation process, the deserializer.object will return None. You can check the error object on the deserializer (deserializer.errors) to get detailed information on the errors.
+.. note:: If your fields in the deserializer class has validators defined, the   validators will run before deserializing the objects. If any error is encountered during the validation process, the ``deserializer.object`` will return ``None``. You can check the error object on the deserializer (``deserializer.errors``) to get detailed information on the errors.

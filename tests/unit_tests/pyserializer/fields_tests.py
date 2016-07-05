@@ -10,35 +10,6 @@ import six
 from pyserializer.fields import *  # flake8: noqa
 
 
-class TestField:
-
-    @patch.object(Field, 'to_native')
-    @patch.object(Field, 'get_component')
-    def test_field_to_native(self, get_component, to_native):
-        obj = Mock(name='obj', display='Dr. John Smith')
-        Field().field_to_native(obj=obj, field_name='display')
-        get_component.assert_called_with(obj, 'display')
-        to_native.assert_called_with(get_component())
-
-    def test_get_component_with_object(self):
-        obj = Mock(name='obj', display='Dr. John Smith')
-        output = Field().get_component(obj, 'display')
-        assert_equal(output, 'Dr. John Smith')
-
-    def test_get_component_with_dict(self):
-        obj = {'display': 'Dr. John Smith'}
-        output = Field().get_component(obj, 'display')
-        assert_equal(output, 'Dr. John Smith')
-
-    def test_to_native_with_iterable(self):
-        output = Field().to_native(['123', '456'])
-        assert_equal(output, ['123', '456'])
-
-    def test_to_native_with_dict(self):
-        output = Field().to_native({'id': '123'})
-        assert_equal(output, {'id': '123'})
-
-
 class TestCharField:
 
     def test_to_native_with_string(self):

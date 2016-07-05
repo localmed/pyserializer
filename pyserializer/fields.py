@@ -4,10 +4,15 @@ import warnings
 import uuid
 import decimal
 
-from pyserializer.utils import is_simple_callable, is_iterable
+from pyserializer.utils import (
+    is_simple_callable,
+    is_iterable,
+    get_object_by_source,
+)
 from pyserializer import constants
 from pyserializer.constants import ISO_8601
 from pyserializer import validators
+from pyserializer.exceptions import MethodMissingError
 
 
 __all__ = [
@@ -22,6 +27,7 @@ __all__ = [
     'DictField',
     'RawField',
     'UrlField',
+    'MethodField',
 ]
 
 
@@ -68,30 +74,20 @@ class Field(object):
         if obj is None:
             return self.empty
         if not self.source:
-            value = self.get_component(obj, field_name)
+            value = get_object_by_source(obj, field_name)
         else:
             try:
                 value = None
                 for index, component in enumerate(self.source.split('.')):
                     if index == 0:
-                        value = self.get_component(obj, component)
+                        value = get_object_by_source(obj, component)
                     else:
-                        value = self.get_component(value, component)
+                        value = get_object_by_source(value, component)
             except AttributeError as e:
                 if self.required is False:
                     return None
                 raise AttributeError(str(e))
         return self.to_native(value)
-
-    def get_component(self, obj, attr_name):
-        """
-        Given an object, and an attribute name,
-        returns the attribute on the object.
-        """
-        if isinstance(obj, dict):
-            return obj.get(attr_name)
-        else:
-            return getattr(obj, attr_name)
 
     def to_native(self, value):
         """
@@ -123,12 +119,14 @@ class Field(object):
 
     def metadata(self):
         metadata = {}
-        metadata['type'] = self.type_label
         metadata['type_name'] = self.type_name
+        metadata['type_label'] = self.type_label
+        metadata['default_validators'] = self.default_validators
         metadata['required'] = getattr(self, 'required', False)
         optional_attrs = [
+            'source',
             'label',
-            'help_text',
+            'validators',
         ]
         for attr in optional_attrs:
             value = getattr(self, attr, None)
@@ -391,9 +389,60 @@ class RawField(Field):
 
 class UrlField(Field):
     """
-    A raw field. Field that does not apply any validation
+    A url field.
     """
 
     type_name = 'UrlField'
     type_label = 'url'
     default_validators = [validators.UrlValidator()]
+
+
+class MethodField(Field):
+    """
+    A method field.
+    """
+
+    type_name = 'MethodField'
+    type_label = 'method'
+    default_validators = [validators.MethodValidator()]
+    default_method_missing_message = (
+        'The method `{method_name}` is missing. '
+        'Please ensure that the method is defined in the '
+        '`{serializer_calss}`.'
+    )
+
+    def __init__(self,
+                 method_name=None,
+                 *args,
+                 **kwargs):
+        """
+        :param method_name: The name of the serialize method
+            defined in serializer.
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
+        self.method_name = method_name
+        super(MethodField, self).__init__(*args, **kwargs)
+
+    def field_to_native(self, obj, field_name):
+        """
+        Given an obj and a field name, returns the value that should be
+        serialized for that field.
+        """
+        if self.method_name:
+            method = getattr(
+                self.parent,
+                self.method_name,
+                None
+            )
+            if not method:
+                raise MethodMissingError(
+                    self.default_method_missing_message
+                    .format(
+                        method_name=self.method_name,
+                        serializer_calss=self.parent.__class__.__name__
+                    )
+                )
+            return method(obj)

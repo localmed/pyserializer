@@ -31,6 +31,7 @@ __all__ = [
     'DateValidator',
     'BooleanValidator',
     'UrlValidator',
+    'MethodValidator',
 ]
 
 
@@ -563,3 +564,24 @@ class UrlValidator(BaseValidator):
         if not self.url_regex.search(value):
             return False
         return True
+
+
+class MethodValidator(BaseValidator):
+    """
+    A Method validator.
+    Checks to see if the method is callable.
+    """
+    type_name = 'MethodValidator'
+    type_label = 'method'
+    default_error_messages = {
+        'invalid': ('Ensure {method_name} is a callable method.')
+    }
+
+    def __call__(self, method_name):
+        if not self.is_valid(method_name):
+            self.fail('invalid', method_name=method_name)
+
+    def is_valid(self, method_name):
+        if callable(method_name):
+            return True
+        return False
