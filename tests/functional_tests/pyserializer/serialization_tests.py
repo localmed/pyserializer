@@ -51,6 +51,7 @@ class TestNestsedSerialization:
         self.CommentSerializer = CommentSerializer
         self.user = User()
         self.comment = Comment()
+        self.Comment = Comment
 
     def test_simple_serialization(self):
         serializer = self.UserSerializer(self.user)
@@ -90,6 +91,18 @@ class TestNestsedSerialization:
         assert_equal(
             serialized_json['created_time'], expected_output['created_time']
         )
+
+    def test_mutliple_serializers(self):
+        serializer_1 = self.CommentSerializer(self.comment)
+        serialized_json_1 = json.loads(json.dumps(serializer_1.data))
+        assert_equal(serialized_json_1['user']['email'], 'foo@example.com')
+        comment_2 = self.Comment()
+        comment_2.content = 'some new content'
+        comment_2.user.email = 'foo2@example.com'
+        serializer_2 = self.CommentSerializer(comment_2)
+        serialized_json_2 = json.loads(json.dumps(serializer_2.data))
+        assert_equal(serialized_json_2['user']['email'], 'foo2@example.com')
+        assert_equal(serialized_json_2['content'], 'some new content')
 
 
 class TestSerializationWithManyTrue:

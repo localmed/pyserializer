@@ -289,6 +289,9 @@ class BaseSerializer(object):
 
         :param obj: The python object passed in to be serialized.
         """
+        if isinstance(obj, (list, tuple)):
+            return [self.to_native(item) for item in obj]
+
         # Maintain the order in which the fields were defined
         output = OrderedDict()
 
@@ -299,8 +302,7 @@ class BaseSerializer(object):
                     serializable_obj = get_object_by_source(obj, field.source)
                 else:
                     serializable_obj = getattr(obj, key)
-                field.instance = serializable_obj
-                value = field.data
+                value = field.to_native(serializable_obj)
             else:
                 field.initialize(parent=self, field_name=field_name)
                 value = field.field_to_native(obj, field_name)
@@ -315,11 +317,7 @@ class BaseSerializer(object):
         Uses the cached version next time when the data property is accessed.
         """
         if not self._data:
-            obj = self.instance
-            if isinstance(obj, (list, tuple)):
-                self._data = [self.to_native(item) for item in obj]
-            else:
-                self._data = self.to_native(obj)
+            self._data = self.to_native(self.instance)
         return self._data
 
     def metadata(self):
