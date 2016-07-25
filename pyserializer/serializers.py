@@ -3,7 +3,10 @@ import copy
 from collections import OrderedDict
 
 from pyserializer.exceptions import ValidationError
-from pyserializer.utils import get_object_by_source
+from pyserializer.utils import (
+    get_object_by_source,
+    filter_list
+)
 
 
 __all__ = [
@@ -312,6 +315,8 @@ class BaseSerializer(object):
                     value = None
                 elif serializable_obj is None and field.many is True:
                     value = []
+                elif not filter_list(serializable_obj):
+                    value = None
                 else:
                     value = field.to_native(serializable_obj)
             else:
