@@ -315,8 +315,14 @@ class BaseSerializer(object):
                 else:
                     value = field.to_native(serializable_obj)
             else:
-                field.initialize(parent=self, field_name=field_name)
-                value = field.field_to_native(obj, field_name)
+                field.initialize(
+                    parent=self,
+                    field_name=field_name,
+                    allow_blank_source=self.allow_blank_source)
+                value = field.field_to_native(
+                    obj,
+                    field_name
+                )
             output[key] = value
         return output
 

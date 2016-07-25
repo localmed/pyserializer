@@ -65,28 +65,18 @@ class Field(object):
         self.required = required
         self.validators = self.default_validators + (validators or [])
         self.empty = kwargs.pop('empty', '')
+        self.allow_blank_source = False
 
-    def field_to_native(self, obj, field_name):
+    def field_to_native(self,
+                        obj,
+                        field_name):
         """
         Given an object and a field name, returns the value that should be
         serialized for that field.
         """
         if obj is None:
             return self.empty
-        if not self.source:
-            value = get_object_by_source(obj, field_name)
-        else:
-            try:
-                value = None
-                for index, component in enumerate(self.source.split('.')):
-                    if index == 0:
-                        value = get_object_by_source(obj, component)
-                    else:
-                        value = get_object_by_source(value, component)
-            except AttributeError as e:
-                if self.required is False:
-                    return None
-                raise AttributeError(str(e))
+        value = get_object_by_source(obj, field_name)
         return self.to_native(value)
 
     def to_native(self, value):
@@ -113,9 +103,10 @@ class Field(object):
             return None
         return value
 
-    def initialize(self, parent, field_name):
+    def initialize(self, parent, field_name, allow_blank_source):
         self.parent = parent
         self.field_name = field_name
+        self.allow_blank_source = allow_blank_source
 
     def metadata(self):
         metadata = {}
