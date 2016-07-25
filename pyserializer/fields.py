@@ -87,6 +87,9 @@ class Field(object):
         """
         Converts the field's value into a serialized representation.
         """
+        print('value===', value)
+        if value is None:
+            return value
         if is_simple_callable(value):
             value = value()
         if (is_iterable(value) and not
