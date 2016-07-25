@@ -75,6 +75,7 @@ class BaseSerializer(object):
                  data_dict=None,
                  source=None,
                  many=False,
+                 allow_blank_source=False,
                  *args,
                  **kwargs):
         """
@@ -86,6 +87,7 @@ class BaseSerializer(object):
         self.data_dict = data_dict
         self.source = source
         self.many = many
+        self.allow_blank_source = allow_blank_source
         self.options = self._options_class(self.Meta)
         self.fields = self.get_fields()
         self._data = None
@@ -299,10 +301,19 @@ class BaseSerializer(object):
             key = field_name
             if isinstance(field, Serializer):
                 if field.source:
-                    serializable_obj = get_object_by_source(obj, field.source)
+                    serializable_obj = get_object_by_source(
+                        obj,
+                        field.source,
+                        field.allow_blank_source
+                    )
                 else:
                     serializable_obj = getattr(obj, key)
-                value = field.to_native(serializable_obj)
+                if serializable_obj is None and field.many is False:
+                    value = None
+                elif serializable_obj is None and field.many is True:
+                    value = []
+                else:
+                    value = field.to_native(serializable_obj)
             else:
                 field.initialize(parent=self, field_name=field_name)
                 value = field.field_to_native(obj, field_name)
