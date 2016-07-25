@@ -76,7 +76,11 @@ class Field(object):
         """
         if obj is None:
             return self.empty
-        value = get_object_by_source(obj, field_name)
+        value = get_object_by_source(
+            obj,
+            field_name,
+            self.allow_blank_source
+        )
         return self.to_native(value)
 
     def to_native(self, value):
