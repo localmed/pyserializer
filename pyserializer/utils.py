@@ -8,6 +8,7 @@ __all__ = [
     'is_iterable',
     'force_str',
     'get_object_by_source',
+    'filter_list',
 ]
 
 
@@ -42,7 +43,7 @@ def force_str(value, encoding='utf-8'):
     return value
 
 
-def get_object_by_source(obj, source):
+def get_object_by_source(obj, source, allow_blank_source=False):
     """
     Tries to get the object by source.
     Similar to Python's `getattr(obj, source)`, but takes a dot separaed
@@ -54,16 +55,31 @@ def get_object_by_source(obj, source):
         >>> obj = get_object_by_source(
             object, source='user.username')
     """
-    if isinstance(obj, collections.Mapping):
-        if '.' in source:
-            for source in source.split('.'):
+    print('allow_blank_source====', source, allow_blank_source)
+    try:
+        if isinstance(obj, collections.Mapping):
+            if '.' in source:
+                for source in source.split('.'):
+                    obj = obj.get(source)
+            else:
                 obj = obj.get(source)
         else:
-            obj = obj.get(source)
-    else:
-        if '.' in source:
-            for source in source.split('.'):
+            if '.' in source:
+                for source in source.split('.'):
+                    obj = getattr(obj, source)
+            else:
                 obj = getattr(obj, source)
-        else:
-            obj = getattr(obj, source)
+    except AttributeError:
+        if not allow_blank_source:
+            raise
+        obj = None
+    return obj
+
+
+def filter_list(obj):
+    """
+    Filters a list by removing all the None value within the list.
+    """
+    if isinstance(obj, (list, tuple)):
+        return [item for item in obj if item is not None]
     return obj

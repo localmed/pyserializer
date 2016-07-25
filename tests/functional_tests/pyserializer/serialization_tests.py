@@ -210,12 +210,105 @@ class TestSerializationWithNestedSource:
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
 
+
+class TestSerializationWithAllowBlankSource:
+
+    def setup(self):
+        class LocationSerializer(Serializer):
+            street = fields.CharField()
+            state = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'street',
+                    'state'
+                )
+
+        class CommentSerializer(Serializer):
+            content = fields.CharField()
+            location = LocationSerializer(
+                source='user.location',
+                allow_blank_source=True
+            )
+
+            class Meta:
+                fields = (
+                    'content',
+                    'location',
+                )
+
+        class Location:
+            def __init__(self, street='Street 123', state='LA'):
+                self.street = street
+                self.state = state
+
+        class User:
+            def __init__(self, location):
+                self.location = location
+
+        class Comment:
+            def __init__(self, user, content='Some text content'):
+                self.user = user
+                self.content = content
+
+        self.CommentSerializer = CommentSerializer
+        self.Location = Location
+        self.User = User
+        self.Comment = Comment
+
     def test_serializer_when_nested_obj_is_none(self):
         user = None
         comment = self.Comment(user=user)
         serializer = self.CommentSerializer(comment)
         expected_output = {
-            'content': 'Some text content'
+            'content': 'Some text content',
+            'location': None
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestSerializationWithAllowBlankSourceAndManyTrue:
+
+    def setup(self):
+        class AddressSerializer(Serializer):
+            street = fields.CharField()
+            state = fields.CharField()
+
+            class Meta:
+                fields = (
+                    'street',
+                    'state'
+                )
+
+        class UserSerializer(Serializer):
+            username = fields.CharField()
+            address = AddressSerializer(
+                source='unavailable_source',
+                many=True,
+                allow_blank_source=True
+            )
+
+            class Meta:
+                fields = (
+                    'username',
+                    'address',
+                )
+
+        class User:
+            def __init__(self, address, username='foobar'):
+                self.address = address
+                self.username = username
+
+        self.UserSerializer = UserSerializer
+        self.User = User
+
+    def test_serializer_when_nested_obj_is_none(self):
+        user = self.User(address=None)
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'username': 'foobar',
+            'address': []
         }
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
