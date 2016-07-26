@@ -55,8 +55,8 @@ def get_object_by_source(obj, source, allow_blank_source=False):
         >>> obj = get_object_by_source(
             object, source='user.username')
     """
-    print('allow_blank_source====', source, allow_blank_source)
     try:
+        print('obj, source, allow_blank_source---', obj, source, allow_blank_source)
         if isinstance(obj, collections.Mapping):
             if '.' in source:
                 for source in source.split('.'):
@@ -73,6 +73,7 @@ def get_object_by_source(obj, source, allow_blank_source=False):
         if not allow_blank_source:
             raise
         obj = None
+    print('obj===', obj)
     return obj
 
 
