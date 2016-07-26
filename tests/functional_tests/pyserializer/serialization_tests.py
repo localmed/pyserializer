@@ -211,6 +211,43 @@ class TestSerializationWithNestedSource:
         assert_equal(serialized_json, expected_output)
 
 
+class TestSerializationWithSourceSpecifiedOnField:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            username = fields.CharField()
+            createdAt = fields.DateTimeField(
+                source='created_at',
+                format='%Y-%m-%dT%H:%M:%SZ'
+            )
+
+            class Meta:
+                fields = (
+                    'username',
+                    'createdAt'
+                )
+
+        class User:
+            def __init__(self,
+                         username='foobar',
+                         created_at=datetime(2015, 1, 1, 10, 30)):
+                self.username = username
+                self.created_at = created_at
+
+        self.User = User
+        self.UserSerializer = UserSerializer
+
+    def test_serialization_with_source_on_field(self):
+        user = self.User()
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'username': 'foobar',
+            'createdAt': '2015-01-01T10:30:00Z'
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
 class TestSerializationWithAllowBlankSource:
 
     def setup(self):

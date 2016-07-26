@@ -75,6 +75,8 @@ class Field(object):
         """
         if obj is None:
             return self.empty
+        # If source is defined use use that as the field name
+        field_name = self.source or field_name
         value = get_object_by_source(
             obj,
             field_name,

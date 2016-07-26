@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Changes in v0.5.0
+Changes in v0.5.2
 =================
 - Add ability to set ``allow_blank_source`` on serializer class. If this is set to ``True`` the serializer class will not throw error if source is not available.
 
