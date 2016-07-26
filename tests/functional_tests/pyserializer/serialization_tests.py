@@ -284,7 +284,7 @@ class TestSerializationWithAllowBlankSourceAndManyTrue:
         class UserSerializer(Serializer):
             username = fields.CharField()
             address = AddressSerializer(
-                source='unavailable_source',
+                source='address',
                 many=True,
                 allow_blank_source=True
             )
@@ -304,7 +304,7 @@ class TestSerializationWithAllowBlankSourceAndManyTrue:
         self.User = User
 
     def test_serializer_when_nested_obj_is_none(self):
-        user = self.User(address=None)
+        user = self.User(address=[None])
         serializer = self.UserSerializer(user)
         expected_output = {
             'username': 'foobar',

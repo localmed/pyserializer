@@ -55,7 +55,6 @@ def get_object_by_source(obj, source, allow_blank_source=False):
         >>> obj = get_object_by_source(
             object, source='user.username')
     """
-    print('allow_blank_source====', source, allow_blank_source)
     try:
         if isinstance(obj, collections.Mapping):
             if '.' in source:

@@ -74,3 +74,7 @@ class TestUtil:
             source='user.username'
         )
         assert_equal(output, 'foo.bar.com')
+
+    def test_filter_list(self):
+        output = filter_list([1, True, False, None])
+        assert_equal(output, [1, True, False])
