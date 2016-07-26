@@ -65,7 +65,6 @@ class Field(object):
         self.required = required
         self.validators = self.default_validators + (validators or [])
         self.empty = kwargs.pop('empty', '')
-        self.allow_blank_source = False
 
     def field_to_native(self,
                         obj,
@@ -87,7 +86,6 @@ class Field(object):
         """
         Converts the field's value into a serialized representation.
         """
-        print('value===', value)
         if value is None:
             return value
         if is_simple_callable(value):

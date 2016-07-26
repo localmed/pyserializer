@@ -312,7 +312,6 @@ class BaseSerializer(object):
                 else:
                     serializable_obj = getattr(obj, key)
                 serializable_obj = filter_list(serializable_obj)
-                print('serializable_obj:=', serializable_obj)
                 if serializable_obj in [None, []] and field.many is False:
                     value = None
                 elif serializable_obj in [None, []] and field.many is True:
