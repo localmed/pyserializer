@@ -8,7 +8,36 @@ from pyserializer.serializers import Serializer
 from pyserializer import fields
 
 
-class TestNestsedSerialization:
+class TestSimpleSerialization:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            email = fields.CharField()
+            username = fields.CharField()
+
+        class User:
+            def __init__(self,
+                         email='foo@example.com',
+                         username='foobar'):
+                self.email = email
+                self.username = username
+
+        self.User = User
+        self.UserSerializer = UserSerializer
+
+    def test_simple_serialization(self):
+        user = self.User()
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'email': 'foo@example.com',
+            'username': 'foobar'
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json['email'], expected_output['email'])
+        assert_equal(serialized_json['username'], expected_output['username'])
+
+
+class TestSimpleSerializationWithMetaFields:
 
     def setup(self):
         class UserSerializer(Serializer):
@@ -18,8 +47,105 @@ class TestNestsedSerialization:
             class Meta:
                 fields = (
                     'email',
-                    'username'
                 )
+
+        class User:
+            def __init__(self,
+                         email='foo@example.com',
+                         username='foobar'):
+                self.email = email
+                self.username = username
+
+        self.User = User
+        self.UserSerializer = UserSerializer
+
+    def test_simple_serialization_with_meta_fields(self):
+        user = self.User()
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'email': 'foo@example.com',
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json['email'], expected_output['email'])
+        assert_equal(serialized_json.keys(), ['email'])
+
+
+class TestSimpleSerializationWithMetaExclude:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            email = fields.CharField()
+            username = fields.CharField()
+
+            class Meta:
+                exclude = (
+                    'username',
+                )
+
+        class User:
+            def __init__(self,
+                         email='foo@example.com',
+                         username='foobar'):
+                self.email = email
+                self.username = username
+
+        self.User = User
+        self.UserSerializer = UserSerializer
+
+    def test_simple_serialization_with_meta_exclude(self):
+        user = self.User()
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'email': 'foo@example.com',
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json['email'], expected_output['email'])
+        assert_equal(serialized_json.keys(), ['email'])
+
+
+class TestSerializationWithSourceSpecifiedOnField:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            username = fields.CharField()
+            createdAt = fields.DateTimeField(
+                source='created_at',
+                format='%Y-%m-%dT%H:%M:%SZ'
+            )
+
+            class Meta:
+                fields = (
+                    'username',
+                    'createdAt'
+                )
+
+        class User:
+            def __init__(self,
+                         username='foobar',
+                         created_at=datetime(2015, 1, 1, 10, 30)):
+                self.username = username
+                self.created_at = created_at
+
+        self.User = User
+        self.UserSerializer = UserSerializer
+
+    def test_serialization_with_source_on_field(self):
+        user = self.User()
+        serializer = self.UserSerializer(user)
+        expected_output = {
+            'username': 'foobar',
+            'createdAt': '2015-01-01T10:30:00Z'
+        }
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
+class TestNestsedSerialization:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            email = fields.CharField()
+            username = fields.CharField()
 
         class CommentSerializer(Serializer):
             user = UserSerializer(source='user')
@@ -27,16 +153,10 @@ class TestNestsedSerialization:
             created_date = fields.DateField(format='%d/%m/%y')
             created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
 
-            class Meta:
-                fields = (
-                    'user',
-                    'content',
-                    'created_date',
-                    'created_time'
-                )
-
         class User:
-            def __init__(self, email='foo@example.com', username='foobar'):
+            def __init__(self,
+                         email='foo@example.com',
+                         username='foobar'):
                 self.email = email
                 self.username = username
 
@@ -55,17 +175,6 @@ class TestNestsedSerialization:
         self.CommentSerializer = CommentSerializer
         self.User = User
         self.Comment = Comment
-
-    def test_simple_serialization(self):
-        user = self.User()
-        serializer = self.UserSerializer(user)
-        expected_output = {
-            'email': 'foo@example.com',
-            'username': 'foobar'
-        }
-        serialized_json = json.loads(json.dumps(serializer.data))
-        assert_equal(serialized_json['email'], expected_output['email'])
-        assert_equal(serialized_json['username'], expected_output['username'])
 
     def test_nested_serialization(self):
         comment = self.Comment(user=self.User())
@@ -118,12 +227,6 @@ class TestSerializationWithManyTrue:
             email = fields.CharField()
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
         class User:
             def __init__(self, email, username):
                 self.email = email
@@ -140,7 +243,7 @@ class TestSerializationWithManyTrue:
         )
         self.users = [self.user_1, self.user_2]
 
-    def test_simple_serialization(self):
+    def test_simple_serialization_with_many_true(self):
         serializer = self.UserSerializer(self.users, many=True)
         expected_output = [{
             'username': 'foo_1',
@@ -153,28 +256,16 @@ class TestSerializationWithManyTrue:
         assert_equal(serialized_json, expected_output)
 
 
-class TestSerializationWithNestedSource:
+class TestSerializationWithNestedSourceDefined:
 
     def setup(self):
         class LocationSerializer(Serializer):
             street = fields.CharField()
             state = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'street',
-                    'state'
-                )
-
         class CommentSerializer(Serializer):
             content = fields.CharField()
             location = LocationSerializer(source='user.location')
-
-            class Meta:
-                fields = (
-                    'content',
-                    'location',
-                )
 
         class Location:
             def __init__(self, street='Street 123', state='LA'):
@@ -211,43 +302,6 @@ class TestSerializationWithNestedSource:
         assert_equal(serialized_json, expected_output)
 
 
-class TestSerializationWithSourceSpecifiedOnField:
-
-    def setup(self):
-        class UserSerializer(Serializer):
-            username = fields.CharField()
-            createdAt = fields.DateTimeField(
-                source='created_at',
-                format='%Y-%m-%dT%H:%M:%SZ'
-            )
-
-            class Meta:
-                fields = (
-                    'username',
-                    'createdAt'
-                )
-
-        class User:
-            def __init__(self,
-                         username='foobar',
-                         created_at=datetime(2015, 1, 1, 10, 30)):
-                self.username = username
-                self.created_at = created_at
-
-        self.User = User
-        self.UserSerializer = UserSerializer
-
-    def test_serialization_with_source_on_field(self):
-        user = self.User()
-        serializer = self.UserSerializer(user)
-        expected_output = {
-            'username': 'foobar',
-            'createdAt': '2015-01-01T10:30:00Z'
-        }
-        serialized_json = json.loads(json.dumps(serializer.data))
-        assert_equal(serialized_json, expected_output)
-
-
 class TestSerializationWithAllowBlankSource:
 
     def setup(self):
@@ -255,24 +309,12 @@ class TestSerializationWithAllowBlankSource:
             street = fields.CharField()
             state = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'street',
-                    'state'
-                )
-
         class CommentSerializer(Serializer):
             content = fields.CharField()
             location = LocationSerializer(
                 source='user.location',
                 allow_blank_source=True
             )
-
-            class Meta:
-                fields = (
-                    'content',
-                    'location',
-                )
 
         class Location:
             def __init__(self, street='Street 123', state='LA'):
@@ -312,12 +354,6 @@ class TestSerializationWithAllowBlankSourceAndManyTrue:
             street = fields.CharField()
             state = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'street',
-                    'state'
-                )
-
         class UserSerializer(Serializer):
             username = fields.CharField()
             address = AddressSerializer(
@@ -325,12 +361,6 @@ class TestSerializationWithAllowBlankSourceAndManyTrue:
                 many=True,
                 allow_blank_source=True
             )
-
-            class Meta:
-                fields = (
-                    'username',
-                    'address',
-                )
 
         class User:
             def __init__(self, address, username='foobar'):

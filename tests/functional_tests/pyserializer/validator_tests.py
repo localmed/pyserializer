@@ -17,12 +17,6 @@ class TestValidator:
             )
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -53,13 +47,6 @@ class TestValidatorWithNestedSerialization:
                 validators=[validators.MaxValueValidator(max_value=90)]
             )
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username',
-                    'age',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -71,13 +58,6 @@ class TestValidatorWithNestedSerialization:
             rating = fields.IntegerField(
                 validators=[validators.MinValueValidator(min_value=0)]
             )
-
-            class Meta:
-                fields = (
-                    'user',
-                    'content',
-                    'rating',
-                )
 
             def __repr__(self):
                 return '<Comment(%r)>' % (self.content)

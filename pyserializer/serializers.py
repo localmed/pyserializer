@@ -3,6 +3,7 @@ import copy
 from collections import OrderedDict
 
 from pyserializer.exceptions import ValidationError
+from pyserializer.fields import Field
 from pyserializer.utils import (
     get_object_by_source,
     filter_list
@@ -85,6 +86,12 @@ class BaseSerializer(object):
         :param instance: Python object which has to be serialized.
         :param data_dict: Dictionary object which has to be deserialized.
         :param source: The source name.
+        :param many: A Bool field which should be set `True` when the
+            instance argument is a list(Serializing multiple python objects
+            in a list). The Default is `False`
+        :param allow_blank_source: A Bool field which should be set `True`
+            if the serializer should not throw an error when the source defined
+            on the field is not present on the instance. The default is `False`
         """
         self.instance = instance
         self.data_dict = data_dict
@@ -109,6 +116,9 @@ class BaseSerializer(object):
         Also, sets the object property if no errors occurred during validation.
         """
         if self._errors is None:
+            # Create a error dict and add all the
+            # error fields and messages into it.
+            self._errors = OrderedDict()
             self.perform_validation(
                 fields=self.fields,
                 data=self.data_dict
@@ -122,8 +132,6 @@ class BaseSerializer(object):
         """
         Runs the validators specified on the fields.
         """
-        # Reset the `self_errors` dict, and run the validation
-        self._errors = OrderedDict()
         for field_name, field in six.iteritems(fields):
             if isinstance(field, Serializer):
                 self.perform_validation(
@@ -269,7 +277,8 @@ class BaseSerializer(object):
         # Get the explicitly declared fields
         base_fields = copy.copy(self.base_fields)
         for key, field in six.iteritems(base_fields):
-            output[key] = field
+            if isinstance(field, (Field, Serializer)):
+                output[key] = field
 
         # Check for specified fields.
         if self.options.fields:
@@ -286,6 +295,7 @@ class BaseSerializer(object):
                 raise ValueError('`exclude` must be a list or tuple.')
             for key in self.options.exclude:
                 output.pop(key, None)
+
         return output
 
     def to_native(self, obj):
