@@ -67,7 +67,7 @@ class TestSimpleSerializationWithMetaFields:
         }
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json['email'], expected_output['email'])
-        assert_equal(serialized_json.keys(), ['email'])
+        assert_equal(list(serialized_json.keys()), ['email'])
 
 
 class TestSimpleSerializationWithMetaExclude:
@@ -100,7 +100,7 @@ class TestSimpleSerializationWithMetaExclude:
         }
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json['email'], expected_output['email'])
-        assert_equal(serialized_json.keys(), ['email'])
+        assert_equal(list(serialized_json.keys()), ['email'])
 
 
 class TestSerializationWithSourceSpecifiedOnField:
