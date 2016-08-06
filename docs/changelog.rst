@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Changes in v0.6.0
+=================
+- Defining Meta class on the serializer class is not required.
+
 Changes in v0.5.2
 =================
 - Add ability to set ``allow_blank_source`` on serializer class. If this is set to ``True`` the serializer class will not throw error if source is not available.
