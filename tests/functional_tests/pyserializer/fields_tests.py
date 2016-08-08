@@ -17,11 +17,6 @@ class TestDateFieldDeserializer:
         class UserDeserializer(Serializer):
             dob = fields.DateField()
 
-            class Meta:
-                fields = (
-                    'dob',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.dob)
 
@@ -79,11 +74,6 @@ class TestDateFieldSerializer:
         class UserSerializer(Serializer):
             dob = fields.DateField()
 
-            class Meta:
-                fields = (
-                    'dob',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.dob)
 
@@ -108,11 +98,6 @@ class TestDateTimeFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             created_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
-
-            class Meta:
-                fields = (
-                    'created_at',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.created_at)
@@ -171,11 +156,6 @@ class TestDateTimeFieldSerializer:
         class UserSerializer(Serializer):
             created_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
 
-            class Meta:
-                fields = (
-                    'created_at',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.created_at)
 
@@ -200,11 +180,6 @@ class TestUUIDFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             user_id = fields.UUIDField()
-
-            class Meta:
-                fields = (
-                    'user_id',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.user_id)
@@ -259,11 +234,6 @@ class TestUUIDFieldSerializer:
         class UserSerializer(Serializer):
             user_id = fields.UUIDField()
 
-            class Meta:
-                fields = (
-                    'user_id',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.user_id)
 
@@ -288,11 +258,6 @@ class TestIntegerFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             age = fields.IntegerField()
-
-            class Meta:
-                fields = (
-                    'age',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.age)
@@ -340,11 +305,6 @@ class TestIntegerFieldSerializer:
         class UserSerializer(Serializer):
             age = fields.IntegerField()
 
-            class Meta:
-                fields = (
-                    'age',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.age)
 
@@ -369,11 +329,6 @@ class TestFloatFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             score = fields.FloatField()
-
-            class Meta:
-                fields = (
-                    'score',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.score)
@@ -421,11 +376,6 @@ class TestFloatFieldSerializer:
         class UserSerializer(Serializer):
             score = fields.FloatField()
 
-            class Meta:
-                fields = (
-                    'score',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.score)
 
@@ -450,11 +400,6 @@ class TestDecimalFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             amount = fields.DecimalField()
-
-            class Meta:
-                fields = (
-                    'amount',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.amount)
@@ -502,11 +447,6 @@ class TestDecimalFieldSerializer:
         class UserSerializer(Serializer):
             amount = fields.DecimalField()
 
-            class Meta:
-                fields = (
-                    'amount',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.amount)
 
@@ -531,11 +471,6 @@ class TestDictFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             preference = fields.DictField()
-
-            class Meta:
-                fields = (
-                    'preference',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.preference)
@@ -583,11 +518,6 @@ class TestDictFieldSerializer:
         class UserSerializer(Serializer):
             preference = fields.DictField()
 
-            class Meta:
-                fields = (
-                    'preference',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.preference)
 
@@ -612,11 +542,6 @@ class TestBooleanFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             enabled = fields.BooleanField()
-
-            class Meta:
-                fields = (
-                    'enabled',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.enabled)
@@ -664,11 +589,6 @@ class TestBooleanFieldSerializer:
         class UserSerializer(Serializer):
             enabled = fields.BooleanField()
 
-            class Meta:
-                fields = (
-                    'enabled',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.enabled)
 
@@ -693,11 +613,6 @@ class TestRawFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             notes = fields.RawField()
-
-            class Meta:
-                fields = (
-                    'notes',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.notes)
@@ -726,11 +641,6 @@ class TestRawFieldSerializer:
         class UserSerializer(Serializer):
             note = fields.RawField()
 
-            class Meta:
-                fields = (
-                    'note',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.note)
 
@@ -755,11 +665,6 @@ class TestUrlFieldDeserializer:
     def setup(self):
         class UserDeserializer(Serializer):
             url = fields.UrlField()
-
-            class Meta:
-                fields = (
-                    'url',
-                )
 
             def __repr__(self):
                 return '<User(%r)>' % (self.url)
@@ -816,11 +721,6 @@ class TestUrlFieldSerializer:
         class UserSerializer(Serializer):
             url = fields.UrlField()
 
-            class Meta:
-                fields = (
-                    'url',
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.url)
 
@@ -863,14 +763,6 @@ class TestMethodFieldSerializer:
                 return dict(
                     first_name=obj.first_name,
                     last_name=obj.last_name,
-                )
-
-            class Meta:
-                fields = (
-                    'first_name',
-                    'last_name',
-                    'full_name',
-                    'name_dict',
                 )
 
             def __repr__(self):

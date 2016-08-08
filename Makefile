@@ -9,7 +9,7 @@ help:
 	@echo "  publish_test     Publishes the lib to pypi test server. Make sure ~/.pypirc is set up correctly. See .pypirc.example for example."
 	@echo "  publish          Publishes the lib to pypi. Make sure ~/.pypirc is set up correctly. See .pypirc.example for example."
 	@echo "  clean            Cleans the temp files and folders."
-	@echo "  watch_doc        Run build the docs when a file changes."
+	@echo "  watch_doc        Starts up the docs server and autobuilds the doc when file changes."
 
 .PHONY: unit_test
 unit_test:
