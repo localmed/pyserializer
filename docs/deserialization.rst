@@ -6,7 +6,7 @@ Deserialization is similar to serialization. Deserialization allows native Pytho
 Defining our deserailizer
 =========================
 
-Lets consider a similar example that we used in serialization example. Lets assume we have a comment object and the comment object has a user attached to it, Now lets define a deserializer class::
+Let's consider a similar example that we used in serialization example. Let's assume we have a comment object and the comment object has a user attached to it, Now let's define a deserializer class::
 
     from pyserializer.serializers import Serializer
     from pyserializer import fields
@@ -32,21 +32,13 @@ Lets consider a similar example that we used in serialization example. Lets assu
         created_date = fields.DateField(format='%Y-%m-%d')
         created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
 
-        class Meta:
-            fields = (
-                'user',
-                'content',
-                'created_date',
-                'created_time',
-            )
-
         def __repr__(self):
             return '<Comment(%r)>' % (self.content)
 
 
 Deserialize the object
 ======================
-Lets use the deserializer class we defined above to deserialize a Python dict::
+Let's use the deserializer class we defined above to deserialize a Python dict::
 
     data_dict = {
         'user': {
@@ -64,4 +56,4 @@ Lets use the deserializer class we defined above to deserialize a Python dict::
     datetime.datetime(2012, 1, 1, 16, 0)
 
 
-.. note:: If your fields in the deserializer class has validators defined, the   validators will run before deserializing the objects. If any error is encountered during the validation process, the ``deserializer.object`` will return ``None``. You can check the error object on the deserializer (``deserializer.errors``) to get detailed information on the errors.
+.. note:: If your fields in the deserializer class has validators defined, the validators will run before deserializing the objects. If any error is encountered during the validation process, the ``deserializer.object`` will return ``None``. You can check the error object on the deserializer (``deserializer.errors``) to get detailed information on the errors.

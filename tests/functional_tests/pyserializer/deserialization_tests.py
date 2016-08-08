@@ -15,12 +15,6 @@ class TestDeserialization:
             email = fields.CharField()
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -45,12 +39,6 @@ class TestDoesNotDeserializationWithValidationErrors:
             )
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -72,12 +60,6 @@ class TestNestedDeserialization:
             email = fields.CharField()
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -86,14 +68,6 @@ class TestNestedDeserialization:
             content = fields.CharField()
             created_date = fields.DateField(format='%Y-%m-%d')
             created_time = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
-
-            class Meta:
-                fields = (
-                    'user',
-                    'content',
-                    'created_date',
-                    'created_time',
-                )
 
             def __repr__(self):
                 return '<Comment(%r)>' % (self.content)
@@ -127,24 +101,12 @@ class TestMultipleNestedDeserialization:
             email = fields.CharField()
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
         class CommentDeserializer(Serializer):
             content = fields.CharField()
             commented_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
-
-            class Meta:
-                fields = (
-                    'content',
-                    'commented_at',
-                )
 
             def __repr__(self):
                 return '<Comment(%r)>' % (self.content)
@@ -153,13 +115,6 @@ class TestMultipleNestedDeserialization:
             user = UserDeserializer()
             comment = CommentDeserializer()
             posted_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
-
-            class Meta:
-                fields = (
-                    'user',
-                    'comment',
-                    'posted_at',
-                )
 
             def __repr__(self):
                 return '<PostDeserializer(%r)>' % (self.user.username)
@@ -194,12 +149,6 @@ class TestInternalNestedDeserialization:
             email = fields.CharField()
             username = fields.CharField()
 
-            class Meta:
-                fields = (
-                    'email',
-                    'username'
-                )
-
             def __repr__(self):
                 return '<User(%r)>' % (self.username)
 
@@ -208,25 +157,12 @@ class TestInternalNestedDeserialization:
             content = fields.CharField()
             commented_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
 
-            class Meta:
-                fields = (
-                    'user',
-                    'content',
-                    'commented_at',
-                )
-
             def __repr__(self):
                 return '<Comment(%r)>' % (self.content)
 
         class PostDeserializer(Serializer):
             comment = CommentDeserializer()
             posted_at = fields.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
-
-            class Meta:
-                fields = (
-                    'comment',
-                    'posted_at',
-                )
 
             def __repr__(self):
                 return '<PostDeserializer(%r)>' % (self.user.username)
