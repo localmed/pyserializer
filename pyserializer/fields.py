@@ -25,8 +25,10 @@ __all__ = [
     'IntegerField',
     'FloatField',
     'DictField',
+    'BooleanField',
     'RawField',
     'UrlField',
+    'EmailField',
     'MethodField',
 ]
 
@@ -44,7 +46,6 @@ class Field(object):
                  source=None,
                  label=None,
                  help_text=None,
-                 required=True,
                  validators=None,
                  *args,
                  **kwargs):
@@ -53,8 +54,6 @@ class Field(object):
             You can use dot syntax to specify nested source. Eg: 'version.name'
         :param label: (optional) The label for the field.
         :param help_text: (optional) The readable help text for the field.
-        :param required: (bool) If the field is required or not.
-            Defaults to True.
         :param validators: List of validators that should be ran when
             deserializing the field. This list will be appended along with
             the default_validators defined on each field.
@@ -62,7 +61,6 @@ class Field(object):
         self.source = source
         self.label = label
         self.help_text = help_text
-        self.required = required
         self.validators = self.default_validators + (validators or [])
         self.empty = kwargs.pop('empty', '')
 
@@ -120,7 +118,6 @@ class Field(object):
         metadata['type_name'] = self.type_name
         metadata['type_label'] = self.type_label
         metadata['default_validators'] = self.default_validators
-        metadata['required'] = getattr(self, 'required', False)
         optional_attrs = [
             'source',
             'label',
@@ -393,6 +390,16 @@ class UrlField(Field):
     type_name = 'UrlField'
     type_label = 'url'
     default_validators = [validators.UrlValidator()]
+
+
+class EmailField(Field):
+    """
+    A email field.
+    """
+
+    type_name = 'EmailField'
+    type_label = 'url'
+    default_validators = [validators.EmailValidator()]
 
 
 class MethodField(Field):

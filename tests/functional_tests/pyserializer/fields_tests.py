@@ -740,6 +740,73 @@ class TestUrlFieldSerializer:
         assert_equal(serialized_json, expected_output)
 
 
+class TestEmailFieldDeserializer:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            email = fields.EmailField()
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.email)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_email_field_valid(self):
+        input_data = {
+            'email': 'foo.bar@example.com'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_true(deserializer.is_valid())
+        assert_equal(
+            deserializer.object.email,
+            'foo.bar@example.com'
+        )
+
+    def test_email_field_with_error(self):
+        input_data = {
+            'email': 'foo.bar'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        deserializer.is_valid()
+        assert_false(deserializer.is_valid())
+        assert_equal(
+            deserializer.errors,
+            OrderedDict(
+                [('email', [OrderedDict([
+                    ('type_name', 'EmailValidator'),
+                    ('type_label', 'email'),
+                    ('message', 'foo.bar is an invalid email address.')
+                ])])]
+            )
+        )
+
+
+class TestEmailFieldSerializer:
+
+    def setup(self):
+        class UserSerializer(Serializer):
+            email = fields.EmailField()
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.email)
+
+        self.UserSerializer = UserSerializer
+
+    def test_email_field(self):
+        class User:
+            def __init__(self):
+                self.email = 'foo.bar@example.com'
+
+        expected_output = {
+            'email': 'foo.bar@example.com'
+        }
+        user = User()
+        serializer = self.UserSerializer(user)
+        serialized_json = json.loads(json.dumps(serializer.data))
+        assert_equal(serialized_json, expected_output)
+
+
 class TestMethodFieldSerializer:
 
     def setup(self):
