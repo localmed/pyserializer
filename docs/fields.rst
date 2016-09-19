@@ -24,7 +24,7 @@ A text representation. Signature: ``CharField(source=None, label=None, help_text
 :attr:`validators` (Default: None)
     List of validators that should be ran when deserializing the field.
 
-    .. note:: The validators are defined in ``validators.py``. You can import them using ``from pyserializer import validators``, and refer to the fields as ``validators.<ValidatorName>``.
+    .. note:: The validators are defined in ``validators.py``. You can import them using ``from pyserializer import validators``, and refer to the validators as ``validators.<ValidatorName>()``.
 
     Some commonly used validators with ``CharField`` are:
 
@@ -125,6 +125,15 @@ A field that validates the input against a URL matching pattern. Signature: ``Ur
 EmailField:
 -----------
 A field that validates the input to be a valid e-mail address. Signature: ``EmailField(source=None, label=None, help_text=None, validators=None)``
+
+
+ChoiceField:
+------------
+A field that validates the input to be within the choice iterable. Signature: ``ChoiceField(choices, source=None, label=None, help_text=None, validators=None)``
+
+:attr:`choices`
+    A sequence of valid values. eg: ``(('enabled', 'Enabled'), ('disabled', 'Disabled'))``
+
 
 
 MethodField:
