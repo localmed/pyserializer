@@ -45,6 +45,9 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
 :doc:`apireference`
   The complete API documentation.
 
+:doc:`changelog`
+  A documentation for changelogs between versions.
+
 Contribute
 ----------
 Always looking for contributions, additions and improvements.
