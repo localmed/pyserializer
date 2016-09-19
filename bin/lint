@@ -10,5 +10,6 @@ fi
 if [ "$1" == "--strict" ]; then
     flake8 --statistics .
 else
-    flake8 --exclude ./docs --ignore E501,E712,F841,F401 --statistics .
+    flake8 --exclude ./docs, \
+           --statistics .
 fi
