@@ -29,6 +29,7 @@ __all__ = [
     'RawField',
     'UrlField',
     'EmailField',
+    'ChoiceField',
     'MethodField',
 ]
 
@@ -400,6 +401,33 @@ class EmailField(Field):
     type_name = 'EmailField'
     type_label = 'url'
     default_validators = [validators.EmailValidator()]
+
+
+class ChoiceField(Field):
+    """
+    A choice field.
+    """
+
+    type_name = 'ChoiceField'
+    type_label = 'choice'
+
+    def __init__(self,
+                 choices,
+                 *args,
+                 **kwargs):
+        """
+        :param choices: A sequence of valid values.
+            eg: (
+                ('enabled', 'Enabled'),
+                ('disabled', 'Disabled'),
+            )
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
+        self.default_validators = [validators.ChoiceValidator(choices=choices)]
+        super(ChoiceField, self).__init__(*args, **kwargs)
 
 
 class MethodField(Field):
