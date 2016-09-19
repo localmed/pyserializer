@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Changes in v0.7.0
+=================
+- Add support for ``EmailField``
+- Add support for ``ChoiceField``
+
 Changes in v0.6.0
 =================
 - Defining Meta class on the serializer class is not required.
