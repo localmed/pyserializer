@@ -32,6 +32,7 @@ __all__ = [
     'BooleanValidator',
     'UrlValidator',
     'MethodValidator',
+    'ChoiceValidator',
 ]
 
 
@@ -584,4 +585,46 @@ class MethodValidator(BaseValidator):
     def is_valid(self, method_name):
         if callable(method_name):
             return True
+        return False
+
+
+class ChoiceValidator(BaseValidator):
+    """
+    A choice validator.
+    Checks to see if the value is within the choice iterable.
+    """
+
+    type_name = 'ChoiceValidator'
+    type_label = 'choice'
+    default_error_messages = {
+        'invalid': ('Ensure {value} is within {choices}.')
+    }
+
+    def __init__(self,
+                 choices,
+                 *args,
+                 **kwargs):
+        """
+        :param choices: (required) A sequence of valid values.
+            eg: (
+                ('enabled', 'Enabled'),
+                ('disabled', 'Disabled'),
+            )
+        """
+        self.choices = choices
+        super(ChoiceValidator, self).__init__(*args, **kwargs)
+
+    def __call__(self, value):
+        # Only run the validator
+        # if the value is not empty ie: (None, '', [], (), {})
+        if value not in constants.EMPTY_VALUES and not self.is_valid(value):
+            self.fail('invalid', value=value, choices=self.choices)
+
+    def is_valid(self, value):
+        return self._value_intersect_choices(value, self.choices)
+
+    def _value_intersect_choices(self, value, choices):
+        for choice in choices:
+            if value == choice[0]:
+                return True
         return False

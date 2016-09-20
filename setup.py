@@ -3,10 +3,10 @@ from setuptools import find_packages, setup
 
 setup(
     name='pyserializer',
-    version='0.6.0',
+    version='0.7.0',
     description='Simple python serialization library.',
     author='LocalMed',
-    author_email='ecordell@localmed.com, pete@localmed.com, joeljames1985@gmail.com',
+    author_email='ecordell@localmed.com, pete@localmed.com, joeljames1985@gmail.com',  # NOQA
     url='',
     license='MIT',
     packages=find_packages(exclude=['tests', 'tests.*']),

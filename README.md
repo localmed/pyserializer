@@ -41,11 +41,6 @@ Contribution
 [Contribution](CONTRIBUTING.md)
 
 
-Features Currently Being Worked On
-----------------------------------
-
-- Support field validations
-
 Copyright
 ---------
 

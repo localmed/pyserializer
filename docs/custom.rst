@@ -55,7 +55,7 @@ Example MaxValueValidator::
         type_name = 'MaxValueValidator'
         type_label = 'max_value'
         default_error_messages = {
-            'invalid': 'Ensure this value is less than or equal to %s.'
+            'invalid': 'Ensure this value is less than or equal to {max_value}.'
         }
 
         def __init__(self,
@@ -74,9 +74,7 @@ Example MaxValueValidator::
             # Only run the validator
             # if the value is not empty ie: (None, '', [], (), {})
             if value not in constants.EMPTY_VALUES and not self.is_valid(value):
-                raise ValidationError(
-                    self.default_error_messages['invalid'] % self.max_value
-                )
+                self.fail('invalid', max_value=self.max_value)
 
         def is_valid(self, value):
             if isinstance(value, six.string_types):
