@@ -357,7 +357,7 @@ class BaseSerializer(object):
         Return a dictionary of metadata about the fields on the serializer.
         """
         return dict(
-            (field_name, field.metadata()) for field_name, field in six.iteritems(self.fields)
+            (field_name, field.metadata()) for field_name, field in six.iteritems(self.fields)  # NOQA
         )
 
 
