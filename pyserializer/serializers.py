@@ -148,10 +148,6 @@ class BaseSerializer(object):
                     field_name,
                     field
                 )
-                ## replace field error message with custom errror message
-                ## if the field has an error_messages set on it
-                ## and has an error while running the validators set n the field
-                ## _overwrite_field_error_message_with_default_field_error_message
 
 
     def invoke_validators_and_set_errors(self,
@@ -184,7 +180,7 @@ class BaseSerializer(object):
         then the filed error message will be overwritten by the custom field error message.
         """
         if self._errors.get(field_name) and field.error_dict:
-            self._errors[field_name] = field.error_dict
+            self._errors[field_name] = [field.error_dict]
 
     @property
     def object(self):

@@ -42,11 +42,11 @@ class TestSetsCustomErrorMessageWhenErrorMessagesArgIsSetWhenDeclaringField:
         )
         assert_equal(
             deserializer.errors['dob'],
-            OrderedDict([
+            [OrderedDict([
                 ('type_name', 'DateField'),
                 ('type_label', 'date'),
                 ('message', 'Custom error message.')
-            ])
+            ])]
         )
 
 
