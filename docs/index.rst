@@ -39,8 +39,14 @@ Also, you can get the source from `GitHub <https://github.com/localmed/pyseriali
 :doc:`fields`
   A list of currently supported fields.
 
-:doc:`custom`
-  A quick example on how you can create custom fields and validators.
+:doc:`custom_error_messages`
+  A quick example on how to set custom error messages on fields.
+
+:doc:`custom_fields`
+  A quick example on how you can create custom fields.
+
+:doc:`custom_validators`
+  A quick example on how you can create custom validators.
 
 :doc:`apireference`
   The complete API documentation.
@@ -123,8 +129,10 @@ The project is licensed under the MIT license.
     deserialization
     validation
     fields
+    custom_error_messages
+    custom_fields
+    custom_validators
     apireference
-    custom
     changelog
 
 Indices and tables
