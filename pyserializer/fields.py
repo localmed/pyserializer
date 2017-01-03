@@ -68,8 +68,14 @@ class Field(object):
         self.validators = self.default_validators + (validators or [])
         self.error_dict = OrderedDict()
         if error_messages:
-            self.error_dict['type_name'] = kwargs.pop('type_name', self.type_name)
-            self.error_dict['type_label'] = kwargs.pop('type_label', self.type_label)
+            self.error_dict['type_name'] = kwargs.pop(
+                'type_name',
+                self.type_name
+            )
+            self.error_dict['type_label'] = kwargs.pop(
+                'type_label',
+                self.type_label
+            )
             self.error_dict['message'] = error_messages['invalid']
 
         self.empty = kwargs.pop('empty', '')

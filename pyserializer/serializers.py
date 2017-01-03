@@ -130,7 +130,8 @@ class BaseSerializer(object):
 
     def perform_validation(self, fields, data):
         """
-        Runs the validators specified on the fields and sets the error messages.
+        Runs the validators specified on the fields
+        and sets the error messages.
         """
         for field_name, field in six.iteritems(fields):
             if isinstance(field, Serializer):
@@ -144,11 +145,10 @@ class BaseSerializer(object):
                     validators=field.validators,
                     value=data.get(field_name)
                 )
-                self._overwrite_field_error_message_with_custom_field_error_message(
+                self._overwrite_field_error_message_with_custom_field_error_message(  # flake8: noqa
                     field_name,
                     field
                 )
-
 
     def invoke_validators_and_set_errors(self,
                                          field_name,
@@ -173,7 +173,8 @@ class BaseSerializer(object):
     def _overwrite_field_error_message_with_custom_field_error_message(self,
             field_name, field):
         """
-        Overwrites the field error message(set by validators) with custom field error message.
+        Overwrites the field error message(set by validators)
+        with custom field error message.
 
         If the field has an `error_messages` property set on it
         and the field has encountered an error while running the validators;
