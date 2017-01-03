@@ -3,6 +3,7 @@ from datetime import datetime, date
 import warnings
 import uuid
 import decimal
+from collections import OrderedDict
 
 from pyserializer.utils import (
     is_simple_callable,
@@ -48,6 +49,7 @@ class Field(object):
                  label=None,
                  help_text=None,
                  validators=None,
+                 error_messages=None,
                  *args,
                  **kwargs):
         """
@@ -58,11 +60,18 @@ class Field(object):
         :param validators: List of validators that should be ran when
             deserializing the field. This list will be appended along with
             the default_validators defined on each field.
+        :param error_messages: (dict) Custom error message on the field.
         """
         self.source = source
         self.label = label
         self.help_text = help_text
         self.validators = self.default_validators + (validators or [])
+        self.error_dict = OrderedDict()
+        if error_messages:
+            self.error_dict['type_name'] = kwargs.pop('type_name', self.type_name)
+            self.error_dict['type_label'] = kwargs.pop('type_label', self.type_label)
+            self.error_dict['message'] = error_messages['invalid']
+
         self.empty = kwargs.pop('empty', '')
 
     def field_to_native(self,
