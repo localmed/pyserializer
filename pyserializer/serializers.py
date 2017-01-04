@@ -130,7 +130,8 @@ class BaseSerializer(object):
 
     def perform_validation(self, fields, data):
         """
-        Runs the validators specified on the fields.
+        Runs the validators specified on the fields
+        and sets the error messages.
         """
         for field_name, field in six.iteritems(fields):
             if isinstance(field, Serializer):
@@ -139,16 +140,20 @@ class BaseSerializer(object):
                     data=data.get(field_name)
                 )
             else:
-                self.invoke_validators(
+                self.invoke_validators_and_set_errors(
                     field_name=field_name,
                     validators=field.validators,
                     value=data.get(field_name)
                 )
+                self._overwrite_field_error_message_with_custom_field_error_message(  # flake8: noqa
+                    field_name,
+                    field
+                )
 
-    def invoke_validators(self,
-                          field_name,
-                          validators,
-                          value):
+    def invoke_validators_and_set_errors(self,
+                                         field_name,
+                                         validators,
+                                         value):
         """
         Calls the validators on the fields.
         Catches the `ValidationError` raised and stores the
@@ -164,6 +169,19 @@ class BaseSerializer(object):
         # Delete the key from the dict, if no error is appended to the list
         if not self._errors[field_name]:
             del self._errors[field_name]
+
+    def _overwrite_field_error_message_with_custom_field_error_message(self,
+            field_name, field):
+        """
+        Overwrites the field error message(set by validators)
+        with custom field error message.
+
+        If the field has an `error_messages` property set on it
+        and the field has encountered an error while running the validators;
+        then the filed error message will be overwritten by the custom field error message.
+        """
+        if self._errors.get(field_name) and field.error_dict:
+            self._errors[field_name] = [field.error_dict]
 
     @property
     def object(self):
