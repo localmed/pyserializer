@@ -66,19 +66,25 @@ class Field(object):
         self.label = label
         self.help_text = help_text
         self.validators = self.default_validators + (validators or [])
+        self.type_name = kwargs.pop(
+            'type_name',
+            self.type_name
+        )
+        self.type_label = kwargs.pop(
+            'type_label',
+            self.type_label
+        )
         self.error_dict = OrderedDict()
         if error_messages:
-            self.error_dict['type_name'] = kwargs.pop(
-                'type_name',
-                self.type_name
-            )
-            self.error_dict['type_label'] = kwargs.pop(
-                'type_label',
-                self.type_label
-            )
-            self.error_dict['message'] = error_messages['invalid']
+            self._create_error_dict(error_messages)
 
         self.empty = kwargs.pop('empty', '')
+
+    def _create_error_dict(self, error_messages):
+        self.error_dict['type_name'] = self.type_name
+        self.error_dict['type_label'] = self.type_label
+        for key, value in six.iteritems(error_messages):
+            self.error_dict[key] = value
 
     def field_to_native(self,
                         obj,
