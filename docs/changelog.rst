@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Changes in v0.8.0
+=================
+- Add support for custom error message when declaring a field
+
 Changes in v0.7.0
 =================
 - Add support for ``EmailField``

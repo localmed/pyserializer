@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='pyserializer',
-    version='0.7.0',
+    version='0.8.0',
     description='Simple python serialization library.',
     author='LocalMed',
     author_email='ecordell@localmed.com, pete@localmed.com, joeljames1985@gmail.com',  # NOQA
@@ -23,6 +23,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP',
     ],
 )
