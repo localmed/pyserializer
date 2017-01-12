@@ -135,7 +135,6 @@ A field that validates the input to be within the choice iterable. Signature: ``
     A sequence of valid values. eg: ``(('enabled', 'Enabled'), ('disabled', 'Disabled'))``
 
 
-
 MethodField:
 ------------
 This that gets its value by calling a method on the serializer class it is attached to. It can be used to add any sort of data to the serialized representation of your object. Signature: ``MethodField(method_name=None, source=None, label=None, help_text=None, validators=None)``
@@ -144,3 +143,11 @@ This that gets its value by calling a method on the serializer class it is attac
     The name of the serialize method defined in serializer.
 
 See :doc:`apireference` for complete documentation on the fields.
+
+
+EnumField:
+------------
+A field that serializes/deserializes python Enum instances. Signature: ``EnumField(enum, source=None, label=None, help_text=None, validators=None)``
+
+:attr:`enum`
+    A python ``enum.Enum`` class.

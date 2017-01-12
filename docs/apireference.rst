@@ -23,6 +23,7 @@ Fields
 .. autoclass:: pyserializer.fields.RawField
 .. autoclass:: pyserializer.fields.UrlField
 .. autoclass:: pyserializer.fields.MethodField
+.. autoclass:: pyserializer.fields.EnumField
 
 Validators
 ==========

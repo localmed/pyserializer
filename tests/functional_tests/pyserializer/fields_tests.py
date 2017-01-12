@@ -7,6 +7,12 @@ import json
 from datetime import datetime, date
 from collections import OrderedDict
 
+# Only test EnumField on python 3.x
+try:
+    from enum import Enum
+except ImportError:
+    Enum = None
+
 from pyserializer import fields
 from pyserializer.serializers import Serializer
 
@@ -933,3 +939,25 @@ class TestMethodFieldSerializer:
         serializer = self.UserSerializer(user)
         serialized_json = json.loads(json.dumps(serializer.data))
         assert_equal(serialized_json, expected_output)
+
+
+if Enum:
+    class TestEnumField:
+
+        class Status(Enum):
+            PENDING = 'pending'
+            COMPLETED = 'completed'
+
+        def setup(self):
+            self.field = fields.EnumField(self.Status)
+
+        def test_to_native(self):
+            assert_equal(self.field.to_native(None), None)
+            assert_equal(self.field.to_native(self.Status.PENDING), 'pending')
+
+        def test_to_python(self):
+            assert_equal(self.field.to_python(None), None)
+            assert_equal(self.field.to_python(''), None)
+            assert_equal(self.field.to_python('pending'), self.Status.PENDING)
+            with assert_raises(ValueError):
+                self.field.to_python('invalid')
