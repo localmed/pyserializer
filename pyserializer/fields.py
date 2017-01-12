@@ -500,3 +500,33 @@ class MethodField(Field):
                     )
                 )
             return method(obj)
+
+
+class EnumField(Field):
+    """
+    A field that serializes/deserializes python Enum instances.
+    """
+
+    type_name = 'EnumField'
+    type_label = 'enum'
+
+    def __init__(self, enum, *args, **kwargs):
+        """
+        :param enum: An :class:`enum.Enum` class.
+        :param args: Arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        :param kwargs: Keyword arguments passed directly into the parent
+            :class:`~pyserializer.Field`.
+        """
+        self.enum = enum
+        super(EnumField, self).__init__(*args, **kwargs)
+
+    def to_native(self, enum):
+        if enum is None:
+            return enum
+        return enum.value
+
+    def to_python(self, value):
+        if value in constants.EMPTY_VALUES:
+            return None
+        return self.enum(value)
