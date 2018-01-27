@@ -33,7 +33,7 @@ publish_test:
 
 .PHONY: publish
 publish:
-	@python setup.py sdist upload -r pypi
+	@python setup.py sdist upload -r pypipersonal
 
 .PHONY: clean
 clean:
