@@ -12,7 +12,7 @@ setup(
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     install_requires=[
-        'six==1.8.0'
+        'six==1.11.0'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
