@@ -6,4 +6,4 @@ if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
 fi
 
 # Run standard Nose tests with coverage
-nosetests --with-coverage --cover-erase --cover-package=pyserializer --with-yanc
+nosetests -s --with-coverage --cover-erase --cover-package=pyserializer --with-yanc

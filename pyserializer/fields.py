@@ -194,8 +194,12 @@ class DateField(Field):
         """
         self.format = format or self.format
         default_validators = [validators.DateValidator(self.format)]
+        field_validators = (
+            kwargs.pop('validators', []) +
+            default_validators
+        )
         super(DateField, self).__init__(
-            validators=default_validators,
+            validators=field_validators,
             *args,
             **kwargs
         )
@@ -246,8 +250,12 @@ class DateTimeField(Field):
         """
         self.format = format or self.format
         default_validators = [validators.DateTimeValidator(self.format)]
+        field_validators = (
+            kwargs.pop('validators', []) +
+            default_validators
+        )
         super(DateTimeField, self).__init__(
-            validators=default_validators,
+            validators=field_validators,
             *args,
             **kwargs
         )

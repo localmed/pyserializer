@@ -15,6 +15,85 @@ except ImportError:
 
 from pyserializer import fields
 from pyserializer.serializers import Serializer
+from pyserializer import validators
+
+
+class TestDefiningFieldsWithValidators:
+
+    def setup(self):
+        class UserDeserializer(Serializer):
+            id = fields.UUIDField(
+                validators=[validators.RequiredValidator()]
+            )
+            name = fields.CharField(
+                validators=[validators.RequiredValidator()]
+            )
+            dob = fields.DateField(
+                validators=[validators.RequiredValidator()]
+            )
+            age = fields.NumberField(
+                validators=[validators.RequiredValidator()]
+            )
+            score = fields.IntegerField(
+                validators=[validators.RequiredValidator()]
+            )
+            score_1 = fields.FloatField(
+                validators=[validators.RequiredValidator()]
+            )
+            score_2 = fields.DecimalField(
+                validators=[validators.RequiredValidator()]
+            )
+            comments = fields.DictField(
+                validators=[validators.RequiredValidator()]
+            )
+            acticated = fields.BooleanField(
+                validators=[validators.RequiredValidator()]
+            )
+            key = fields.RawField(
+                validators=[validators.RequiredValidator()]
+            )
+            url = fields.UrlField(
+                validators=[validators.RequiredValidator()]
+            )
+            status = fields.ChoiceField(
+                choices=(
+                    ('enabled', 'Enabled'),
+                    ('disabled', 'Disabled')
+                ),
+                validators=[validators.RequiredValidator()]
+            )
+            created = fields.DateTimeField(
+                format='%Y-%m-%dT%H:%M:%SZ',
+                validators=[validators.RequiredValidator()]
+            )
+
+            def __repr__(self):
+                return '<User(%r)>' % (self.name)
+
+        self.UserDeserializer = UserDeserializer
+
+    def test_defining_fields_with_validators(self):
+        date_str = '2016-06-16'
+        input_data = {
+            'id': 'a0ac6343-1a63-4664-9fa0-ea37c0520468',
+            'name': 'Joe',
+            'dob': date_str,
+            'age': 30,
+            'score': 100,
+            'score_1': 100.5,
+            'score_2': 200.5,
+            'comments': {
+                '1': 'some comment'
+            },
+            'acticated': True,
+            'key': 'some key',
+            'url': 'https://www.google.com/',
+            'status': 'enabled',
+            'created': '2016-06-16T18:21:00Z'
+        }
+        deserializer = self.UserDeserializer(data_dict=input_data)
+        assert_true(deserializer.is_valid())
+        assert_equal(deserializer.errors, OrderedDict())
 
 
 class TestDateFieldDeserializer:
@@ -949,7 +1028,10 @@ if Enum:
             COMPLETED = 'completed'
 
         def setup(self):
-            self.field = fields.EnumField(self.Status)
+            self.field = fields.EnumField(
+                self.Status,
+                validators=[validators.RequiredValidator()]
+            )
 
         def test_to_native(self):
             assert_equal(self.field.to_native(None), None)

@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Changes in v0.9.1
+=================
+- Fix cannot add validators to DateTimeField and DateField
+
 Changes in v0.8.0
 =================
 - Add support for custom error message when declaring a field
